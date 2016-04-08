@@ -6,4 +6,4 @@
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, onward, "onward" );
  
 DEFINE_LOG_CATEGORY(HelloWorld);
-DEFINE_LOG_CATEGORY(WorldTime);
+DEFINE_LOG_CATEGORY(LogWorldTime);
