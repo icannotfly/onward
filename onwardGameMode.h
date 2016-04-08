@@ -8,8 +8,13 @@ class AonwardGameMode : public AGameMode
 {
 	GENERATED_BODY()
 
+
+
 public:
+
 	AonwardGameMode();
+
+	virtual void Tick(float DeltaSeconds) override;
 };
 
 
