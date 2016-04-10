@@ -49,6 +49,18 @@ public:
 		Remainder = iRemainder;
 	}
 
+	//note that values can be more than their respective maximums, but cannot be negative
+	FTimestamp(uint32 iYear, uint8 iMonth, uint8 iDay, uint8 iHour, uint8 iMinute, uint8 iSecond)
+	{
+		TotalSeconds
+			= iYear * GAME_SECONDS_IN_YEAR
+			+ iMonth * GAME_SECONDS_IN_MONTH
+			+ iDay * GAME_SECONDS_IN_DAY
+			+ iHour * GAME_SECONDS_IN_HOUR
+			+ iMinute * GAME_SECONDS_IN_MINUTE
+			+ iSecond;
+	}
+
 
 
 	const uint64 GetTotalSeconds() { return TotalSeconds; }
