@@ -35,7 +35,7 @@ void AonwardGameMode::Tick(float DeltaSeconds)
 			float SecondsToAdd = DeltaSeconds * WS->GetRealWorldToInGameTimeConversionFactor();
 			GI->GetWorldTime()->AddSeconds(SecondsToAdd);
 
-			UE_LOG(LogWorldTime, Log, TEXT("time: %u    -    added %f sec to world time"), GI->GetWorldTime()->GetTotalSeconds(), SecondsToAdd);
+			UE_LOG(LogWorldTime, Log, TEXT("time: %s    -    added %f sec to world time"), *(GI->GetWorldTime()->ToString(1)), SecondsToAdd);
 		}
 	}
 
