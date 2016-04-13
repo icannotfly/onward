@@ -132,7 +132,7 @@ public:
 
 
 
-	//print this timestamp's value to a human-readable FString. optional int input controlls formatting: 0 (default) = ISO 8601 (YYYY-MM-DD HH:MM:SS), 1 = ISO 8601 with debug info (YYY-MM-DD HH:MM:SS TotalSeconds,Remainder)
+	//print this timestamp's value to a human-readable FString. optional int input controlls formatting: 0 (default) = ISO 8601 (YYYY-MM-DD HH:MM:SS), 1 = ISO 8601 with debug info (YYY-MM-DD HH:MM:SS TotalSeconds,Remainder), 2 = ISO 8601 with debug and season (YYY-MM-DD HH:MM:SS TotalSeconds,Remainder Season)
 	FString ToString(uint8 iFormatting = 0)
 	{
 		FString Ret = "";;
@@ -177,13 +177,63 @@ public:
 			Ret += ")";
 			break;
 
+		case 2: //ISO 8601 + TotalSeconds and Remainder + Season
+			Ret = ToString(1);
+			Ret += " ";
+			Ret += GetSeason();
+			break;
+
+
 		default:
-			Ret = "Invalid Formatting";
+			Ret += "Invalid Formatting";
 			break;
 		}
 
 		return Ret;
 	}
+
+
+
+	//returns an FString containting the current season
+	FString GetSeason()
+	{
+		FString Ret = "";
+		float ToY = GetTimeOfYear();
+
+		//expand ToY range to 0.0 <= x < 4.0
+		float SeasonFloat = FMath::Fmod((ToY + (1.0 / GAME_MONTHS_IN_YEAR)), 1.0) * 4.0;
+
+		//determine prefix
+		if (FMath::Fmod(SeasonFloat, 1.0) <= 0.333333)
+		{
+			Ret = "Early ";
+		}
+		else if (FMath::Fmod(SeasonFloat, 1.0) > -0.666667)
+		{
+			Ret = "Late ";
+		}
+		else
+		{
+			Ret = "Mid ";
+		}
+
+		//determine prefix
+		switch (FMath::FloorToInt(SeasonFloat))
+		{
+		case 0: Ret += "Winter"; break;
+		case 1: Ret += "Spring"; break;
+		case 2: Ret += "Summer"; break;
+		case 3: Ret += "Autumn"; break; //it was gonna be "fall" but then they'd be different widths
+		default: Ret = "=ERROR="; break;
+		}
+
+		return Ret;
+	}
+
+
+
+	//returns a float in the range 0.0 (beginning of year) to 1.0 (end of year)
+	float GetTimeOfYear() { return  FMath::Fmod(float(TotalSeconds), GAME_SECONDS_IN_YEAR) / GAME_SECONDS_IN_YEAR; }
 };
 
 
