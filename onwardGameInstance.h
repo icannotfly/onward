@@ -234,6 +234,9 @@ public:
 
 	//returns a float in the range 0.0 (beginning of year) to 1.0 (end of year)
 	float GetTimeOfYear() { return  FMath::Fmod(float(TotalSeconds), GAME_SECONDS_IN_YEAR) / GAME_SECONDS_IN_YEAR; }
+
+	//returns a float in the range 0.0 (beginning of day, 00:00) to 1.o (end of day, 24:00)
+	float GetTimeOfDay() { return FMath::Fmod(float(TotalSeconds), GAME_SECONDS_IN_DAY) / GAME_SECONDS_IN_DAY; }
 };
 
 
