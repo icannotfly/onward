@@ -19,8 +19,8 @@ AonwardWorldSettings::AonwardWorldSettings()
 bool AonwardWorldSettings::ValidateRealWorldMinutesPerIngameDayValue(float iTestValue)
 {
 	return
-		iTestValue <= RealWorldMinutesPerInGameDayAcceptableRange.X &&
-		iTestValue >= RealWorldMinutesPerInGameDayAcceptableRange.Y;
+		iTestValue >= RealWorldMinutesPerInGameDayAcceptableRange.X &&
+		iTestValue <= RealWorldMinutesPerInGameDayAcceptableRange.Y;
 }
 
 
@@ -38,13 +38,13 @@ bool AonwardWorldSettings::SetRealWorldMinutesPerInGameDay(float iNewValue)
 	else if (ValidateRealWorldMinutesPerIngameDayValue(iNewValue))
 	{
 		RealWorldMinutesPerInGameDay = iNewValue;
-		UE_LOG(LogWorldTime, Log, TEXT("%s value changed. Time now passes at the rate of %d real-world minutes per in-game day."), *(MsgRoot), RealWorldMinutesPerInGameDay);
+		UE_LOG(LogWorldTime, Log, TEXT("%s value changed. Time now passes at the rate of %f real-world minutes per in-game day."), *(MsgRoot), RealWorldMinutesPerInGameDay);
 		CalcRealWorldToInGameTimeConversionFactor();
 		return true;
 	}
 	else
 	{
-		UE_LOG(LogWorldTime, Log, TEXT("%s cannot change value: outside acceptable range (%d,%d)."), *(MsgRoot), RealWorldMinutesPerInGameDayAcceptableRange.X, RealWorldMinutesPerInGameDayAcceptableRange.Y);
+		UE_LOG(LogWorldTime, Log, TEXT("%s cannot change value: outside acceptable range (%f,%f)."), *(MsgRoot), RealWorldMinutesPerInGameDayAcceptableRange.X, RealWorldMinutesPerInGameDayAcceptableRange.Y);
 		return true;
 	}
 }
@@ -55,5 +55,5 @@ void AonwardWorldSettings::CalcRealWorldToInGameTimeConversionFactor()
 {
 	RealWorldToInGameTimeConversionFactor = (GAME_HOURS_IN_DAY * GAME_MINUTES_IN_HOUR * GAME_SECONDS_IN_MINUTE) / (GetRealWorldMinutesPerInGameDay() * 60.0);
 			
-	UE_LOG(LogWorldTime, Log, TEXT("RW to IG time conversion factor is now %d"), RealWorldToInGameTimeConversionFactor);
+	UE_LOG(LogWorldTime, Log, TEXT("RW to IG time conversion factor is now %f"), RealWorldToInGameTimeConversionFactor);
 }
