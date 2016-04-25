@@ -3,7 +3,8 @@
 #ifndef __ONWARD_H__
 #define __ONWARD_H__
 
-#include "EngineMinimal.h"
+//#include "EngineMinimal.h"
+#include "Engine.h" //needed for GEngine calls
 
 
 
