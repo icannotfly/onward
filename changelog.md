@@ -16,3 +16,6 @@ changelog
 - 07: added skeleton of FTimestamp class to store time-related data. changed a few variable and log category names for clarity. moved time period #defines to onward.h so they're available everywhere.
 - 09: renamed some defines for clarity, added a few more to reduce the number of calculations we need to make in-game. added Date values to timestamp and a method to calculate them. date values are secondary to TotalSeconds and arent used for actual timekeeping. added a ToString method to timestamp to return human-readable values.
 - 10: added new formatting option to ToString (ISO 8601 + debug + season), added season string (late winter, early summer, etc), plugged new ToString formatting into GameMode's tick.
+- 22: worked on slate ui a bit.
+- 23: more slate.
+- 24: added TimeRate console command. got basic DebugBar system up and working.
