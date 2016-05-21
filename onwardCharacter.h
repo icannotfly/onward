@@ -62,5 +62,28 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+
+
+	virtual void BeginPlay() override;
+
+
+
+	//
+	// camera
+	//
+private:
+
+	//is camera in firstperson mode?
+	bool bCameraIsFirstperson = false;
+
+
+protected:
+
+	//called on mousewheel scroll up
+	void Input_ScrollUp();
+
+	//called on mousewheel scroll down
+	void Input_ScrollDown();
 };
 

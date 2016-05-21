@@ -65,6 +65,10 @@ void AonwardCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	// handle touch devices
 	InputComponent->BindTouch(IE_Pressed, this, &AonwardCharacter::TouchStarted);
 	InputComponent->BindTouch(IE_Released, this, &AonwardCharacter::TouchStopped);
+
+	//camera movement
+	InputComponent->BindAction("CameraMoveIn", IE_Pressed, this, &AonwardCharacter::Input_ScrollUp);
+	InputComponent->BindAction("CameraMoveOut", IE_Pressed, this, &AonwardCharacter::Input_ScrollDown);
 }
 
 
@@ -123,5 +127,62 @@ void AonwardCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+	}
+}
+
+
+
+void AonwardCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//attach camera to eyes
+	
+}
+
+
+
+void AonwardCharacter::Input_ScrollUp()
+{
+	if (GetCameraBoom()->TargetArmLength > 100.0)
+	{
+		bCameraIsFirstperson = false;
+		GetCameraBoom()->TargetArmLength -= 100.0;
+	}
+	else
+	{
+		//zoomed in all the way
+		bCameraIsFirstperson = true;
+
+		GetCameraBoom()->AttachTo(GetMesh(), "eyes", EAttachLocation::SnapToTarget);
+		GetCameraBoom()->TargetArmLength = 0;
+		
+		//and move camera and character together
+		bUseControllerRotationPitch = false; //enable for funky weird moonwalking
+		bUseControllerRotationRoll = true;
+		bUseControllerRotationYaw = true;
+	}
+}
+
+
+
+void AonwardCharacter::Input_ScrollDown()
+{
+	GetCameraBoom()->AttachTo(GetMesh(), "ThirdpersonCameraTarget", EAttachLocation::SnapToTarget);
+
+	//move camera seperately of character
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationRoll = false;
+	bUseControllerRotationYaw = false; //set true to make character yaw with camera
+
+	if (GetCameraBoom()->TargetArmLength < 1000.f)
+	{
+		bCameraIsFirstperson = false;
+		GetCameraBoom()->TargetArmLength += 100.f;
+	}
+	else
+	{
+		//zoomed all the way out
+		GetCameraBoom()->TargetArmLength = 1000.f;
 	}
 }
