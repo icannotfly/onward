@@ -136,8 +136,8 @@ void AonwardCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//attach camera to eyes
-	
+	//attach camera to thirdperson target
+	GetCameraBoom()->AttachTo(GetMesh(), "ThirdpersonCameraTarget", EAttachLocation::SnapToTarget);
 }
 
 
