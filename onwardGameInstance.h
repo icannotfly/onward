@@ -100,6 +100,28 @@ public:
 
 
 
+	//adds the specified YMD-HMS to this timestamp. given values must respect lower bounds but going over upper bound will cause them to flow into the next highest value. returns true if time successfully added, false if provided values were invalid or some other error; will log error.
+	bool AddTime(uint32 iYear, uint8 iMonth, uint8 iDay, uint8 iHour, uint8 iMinute, uint8 iSecond = 0)
+	{
+		if (iYear >= 0 && iMonth >= 0 && iDay >= 0 && iHour >= 0 && iMinute >= 0 && iSecond >= 0)
+		{
+
+			TotalSeconds += iSecond;
+			TotalSeconds += iMinute * GAME_SECONDS_IN_MINUTE;
+			TotalSeconds += iHour * GAME_SECONDS_IN_HOUR;
+			TotalSeconds += iDay * GAME_SECONDS_IN_DAY;
+			TotalSeconds += iMonth * GAME_SECONDS_IN_MONTH;
+			TotalSeconds += iYear * GAME_SECONDS_IN_YEAR;
+
+			return true;
+		}
+		
+		UE_LOG(LogWorldTime, Warning, TEXT("attempted to add one or more invalid amount(s) to a timestamp."));
+		return false;
+	}
+
+
+
 	//calculate date values; will skip calculation if values are current and do not need to be updated.
 	void CalcDateValues()
 	{
@@ -128,6 +150,9 @@ public:
 		RollingTotal -= Minute * GAME_SECONDS_IN_MINUTE;
 
 		Second = RollingTotal;
+
+		//make a note of when this calculation was done
+		DateLastUpdated = TotalSeconds;
 	}
 
 
@@ -224,7 +249,7 @@ public:
 		case 1: Ret += "Spring"; break;
 		case 2: Ret += "Summer"; break;
 		case 3: Ret += "Autumn"; break; //it was gonna be "fall" but then they'd be different widths
-		default: Ret = "=ERROR="; break;
+		default: Ret = "! ERROR !"; break;
 		}
 
 		return Ret;
