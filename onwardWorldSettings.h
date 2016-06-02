@@ -24,6 +24,9 @@ private:
 	//multiply a real-world seconds value by this number to get the corresponding amount of in-game seconds. this value is updated every time the length of an in-game day changes.
 	float RealWorldToInGameTimeConversionFactor = 0.0;
 
+	//a temporary directional light that we can move around before implementing an astrolabe or something else
+	UPROPERTY(EditAnywhere) ADirectionalLight* Temp_Sun;
+
 
 
 public:
@@ -35,4 +38,6 @@ public:
 
 	const float GetRealWorldToInGameTimeConversionFactor() { return RealWorldToInGameTimeConversionFactor; }
 	void CalcRealWorldToInGameTimeConversionFactor();
+
+	ADirectionalLight* GetTempSun() { return Temp_Sun; }
 };
