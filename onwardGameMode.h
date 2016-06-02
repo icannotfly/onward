@@ -27,6 +27,9 @@ public:
 	//set the world time to a specific point in time. not all values need to be supplied, but incoming values will be assumed in descending order starting with year. values do not need to obey upper limits.
 	UFUNCTION(exec) void TimeSet(uint32 iYear, uint8 iMonth, uint8 iDay, uint8 iHour, uint8 iMinute, uint8 iSecond);
 
+	//adds the specified amount to the current world time. values do not need to obey upper limits.
+	UFUNCTION(exec) void TimeAdd(uint32 iYear, uint8 iMonth, uint8 iDay, uint8 iHour, uint8 iMinute, uint8 iSecond);
+
 	//forward time to the specified point
 	UFUNCTION() void ForwardTimeTo(FTimestamp iTargetTime);
 };

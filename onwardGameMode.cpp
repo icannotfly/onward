@@ -112,6 +112,23 @@ void AonwardGameMode::TimeSet(uint32 iYear, uint8 iMonth, uint8 iDay, uint8 iHou
 
 
 
+void AonwardGameMode::TimeAdd(uint32 iYear, uint8 iMonth, uint8 iDay, uint8 iHour, uint8 iMinute, uint8 iSecond)
+{
+	UonwardGameInstance* GI = Cast<UonwardGameInstance>(GetGameInstance());
+
+	if (GI)
+	{
+		ForwardTimeTo(FTimestamp(GI->GetWorldTime()->GetTotalSeconds() + FTimestamp(iYear, iMonth, iDay, iHour, iMinute, iSecond).GetTotalSeconds(), GI->GetWorldTime()->GetRemainder()));
+	}
+	else
+	{
+		UE_LOG(LogWorldTime, Warning, TEXT("Could not forward time: could not find GameInstance."));
+		return;
+	}
+}
+
+
+
 void AonwardGameMode::ForwardTimeTo(FTimestamp iTargetTime)
 {
 	UonwardGameInstance* GI = Cast<UonwardGameInstance>(GetGameInstance());
