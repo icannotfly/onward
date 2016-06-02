@@ -42,6 +42,28 @@ void AonwardGameMode::Tick(float DeltaSeconds)
 			GI->GetWorldTime()->AddSeconds(SecondsToAdd);
 
 			UE_LOG(LogWorldTime, Verbose, TEXT("time: %s  -  added %f sec to world time"), *(GI->GetWorldTime()->ToString(2)), SecondsToAdd);
+
+
+
+			//move the sun
+			if (WS->GetTempSun() != nullptr)
+			{
+				ADirectionalLight* Sun = WS->GetTempSun();
+
+				FRotator Rot = FRotator(0, 0, 0);
+
+				// Y  Z  X
+				// P  Y  R
+
+				Rot.Yaw = -90.0;
+				Rot.Pitch = 360.0 * GI->GetWorldTime()->GetTimeOfDay() * -1 + 90.0;
+
+				Sun->SetActorRotation(Rot);
+			}
+			else
+			{
+				UE_LOG(LogWorldTime, Verbose, TEXT("could not find a sun to move."));
+			}
 		}
 	}
 
