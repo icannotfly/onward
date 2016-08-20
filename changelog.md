@@ -25,5 +25,8 @@ changelog
 - 29: reworked most of the brushes in the map. added TimeAdd.
 
 ###2016-06
-- 01: added sun to world and some temp pointers and getters in worldsettings for the sun. made sun move.
+- 01: added sun to world and some temp pointers and getters in worldsettings for the sun. made sun move. added an ontick update call for the skydome in the level blueprint. started on multiplayer support.
+
+###2016-08
+- 15: updated engine to 4.12.5.
 
