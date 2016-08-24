@@ -65,6 +65,14 @@ void AonwardCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	// handle touch devices
 	InputComponent->BindTouch(IE_Pressed, this, &AonwardCharacter::TouchStarted);
 	InputComponent->BindTouch(IE_Released, this, &AonwardCharacter::TouchStopped);
+
+	//camera movement
+	InputComponent->BindAction("CameraMoveIn", IE_Pressed, this, &AonwardCharacter::Input_ScrollUp);
+	InputComponent->BindAction("CameraMoveOut", IE_Pressed, this, &AonwardCharacter::Input_ScrollDown);
+
+	//movement - sprint
+	InputComponent->BindAction("Sprint", IE_Pressed, this, &AonwardCharacter::Input_RequestSprintStart);
+	InputComponent->BindAction("Sprint", IE_Released, this, &AonwardCharacter::Input_RequestSprintStop);
 }
 
 
@@ -101,6 +109,11 @@ void AonwardCharacter::MoveForward(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
+		if(Role == ROLE_Authority)
+		{
+			MyServerFunction();
+		}
+
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -124,4 +137,89 @@ void AonwardCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+
+
+void AonwardCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//attach camera to thirdperson target
+	GetCameraBoom()->AttachTo(GetMesh(), "ThirdpersonCameraTarget", EAttachLocation::SnapToTarget);
+}
+
+
+
+void AonwardCharacter::Input_ScrollUp()
+{
+	if (GetCameraBoom()->TargetArmLength > 100.0)
+	{
+		bCameraIsFirstperson = false;
+		GetCameraBoom()->TargetArmLength -= 100.0;
+	}
+	else
+	{
+		//zoomed in all the way
+		bCameraIsFirstperson = true;
+
+		GetCameraBoom()->AttachTo(GetMesh(), "eyes", EAttachLocation::SnapToTarget);
+		GetCameraBoom()->TargetArmLength = 0;
+		
+		//and move camera and character together
+		bUseControllerRotationPitch = false; //enable for funky weird moonwalking
+		bUseControllerRotationRoll = true;
+		bUseControllerRotationYaw = true;
+	}
+}
+
+
+
+void AonwardCharacter::Input_ScrollDown()
+{
+	GetCameraBoom()->AttachTo(GetMesh(), "ThirdpersonCameraTarget", EAttachLocation::SnapToTarget);
+
+	//move camera seperately of character
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationRoll = false;
+	bUseControllerRotationYaw = false; //set true to make character yaw with camera
+
+	if (GetCameraBoom()->TargetArmLength < 1000.f)
+	{
+		bCameraIsFirstperson = false;
+		GetCameraBoom()->TargetArmLength += 100.f;
+	}
+	else
+	{
+		//zoomed all the way out
+		GetCameraBoom()->TargetArmLength = 1000.f;
+	}
+}
+
+
+
+void AonwardCharacter::Input_RequestSprintStart()
+{
+	UE_LOG(HelloWorld, Log, TEXT("sprint start requested"));
+}
+
+
+
+void AonwardCharacter::Input_RequestSprintStop()
+{
+	UE_LOG(HelloWorld, Log, TEXT("sprint stop  requested"));
+}
+
+
+
+void AonwardCharacter::MyServerFunction_Implementation()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("hello there - called on client and executed on server."));
+}
+
+
+
+bool AonwardCharacter::MyServerFunction_Validate()
+{
+	return true; //lol
 }

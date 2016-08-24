@@ -1,0 +1,29 @@
+onward
+======
+
+changelog
+---------
+
+###2016-04
+- 02: added HelloWorld log category for use when spawning new entities in.
+- 03: upped framerate cap to 150. added GameInstance to hold things that should be both globally accessable and persistant. added a temporary WorldTime float to GameInstance. added GameInstance entry to DefaultEngine.ini as per https://wiki.unrealengine.com/Game_Instance,_Custom_Game_Instance_For_Inter-Level_Persistent_Data_Storage .
+- 04: tried intellisense speedup via https://forums.unrealengine.com/showthread.php?93546-For-those-who-suffer-from-Visual-Studio-IntelliSense-slowness . added onwardWorldSettings class and plugged it in in editor. added WorldTime debug message category.
+- 05: worked on timekeeper math.
+- 06: did a bit more to the timekeeper.
+- 07: added skeleton of FTimestamp class to store time-related data. changed a few variable and log category names for clarity. moved time period #defines to onward.h so they're available everywhere.
+- 09: renamed some defines for clarity, added a few more to reduce the number of calculations we need to make in-game. added Date values to timestamp and a method to calculate them. date values are secondary to TotalSeconds and arent used for actual timekeeping. added a ToString method to timestamp to return human-readable values.
+- 10: added new formatting option to ToString (ISO 8601 + debug + season), added season string (late winter, early summer, etc), plugged new ToString formatting into GameMode's tick.
+
+###2016-05
+- 22: worked on slate ui a bit.
+- 23: more slate.
+- 24: added TimeRate console command. got basic DebugBar system up and working.
+- 27: added AddTime method to gameinstance.
+- 29: reworked most of the brushes in the map. added TimeAdd.
+
+###2016-06
+- 01: added sun to world and some temp pointers and getters in worldsettings for the sun. made sun move. added an ontick update call for the skydome in the level blueprint. started on multiplayer support.
+
+###2016-08
+- 15: updated engine to 4.12.5.
+
