@@ -258,7 +258,7 @@ onward.bat
 
 # these will likely change too often to be of use
 onward.sln
-onward.uproject
+#onward.uproject
 
 # not sure how i didn't have this before
 *.old
