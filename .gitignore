@@ -263,3 +263,4 @@ onward.uproject
 # not sure how i didn't have this before
 *.old
 *.bak
+.gitattributes
