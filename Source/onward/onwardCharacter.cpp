@@ -69,6 +69,10 @@ void AonwardCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	//camera movement
 	InputComponent->BindAction("CameraMoveIn", IE_Pressed, this, &AonwardCharacter::Input_ScrollUp);
 	InputComponent->BindAction("CameraMoveOut", IE_Pressed, this, &AonwardCharacter::Input_ScrollDown);
+
+	//movement - sprint
+	InputComponent->BindAction("Sprint", IE_Pressed, this, &AonwardCharacter::Input_RequestSprintStart);
+	InputComponent->BindAction("Sprint", IE_Released, this, &AonwardCharacter::Input_RequestSprintStop);
 }
 
 
@@ -105,6 +109,11 @@ void AonwardCharacter::MoveForward(float Value)
 {
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
+		if(Role == ROLE_Authority)
+		{
+			MyServerFunction();
+		}
+
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -185,4 +194,32 @@ void AonwardCharacter::Input_ScrollDown()
 		//zoomed all the way out
 		GetCameraBoom()->TargetArmLength = 1000.f;
 	}
+}
+
+
+
+void AonwardCharacter::Input_RequestSprintStart()
+{
+	UE_LOG(HelloWorld, Log, TEXT("sprint start requested"));
+}
+
+
+
+void AonwardCharacter::Input_RequestSprintStop()
+{
+	UE_LOG(HelloWorld, Log, TEXT("sprint stop  requested"));
+}
+
+
+
+void AonwardCharacter::MyServerFunction_Implementation()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("hello there - called on client and executed on server."));
+}
+
+
+
+bool AonwardCharacter::MyServerFunction_Validate()
+{
+	return true; //lol
 }

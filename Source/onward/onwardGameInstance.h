@@ -275,11 +275,13 @@ class ONWARD_API UonwardGameInstance : public UGameInstance
 	
 private:
 	
-	FTimestamp WorldTime;
+	UPROPERTY(Replicated) FTimestamp WorldTime;
 
 
 public:
 
 	FTimestamp* GetWorldTime() { return &WorldTime; }
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 };

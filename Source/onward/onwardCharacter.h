@@ -85,5 +85,31 @@ protected:
 
 	//called on mousewheel scroll down
 	void Input_ScrollDown();
+
+
+
+	//
+	// movement
+	//
+
+private:
+
+	//called when sprint key is pressed, asks pawn to start sprinting
+	void Input_RequestSprintStart();
+
+	//called when sprint key is released, asks pawn to stop sprinting
+	void Input_RequestSprintStop();
+
+
+
+	//
+	// test
+	//
+
+public:
+	UFUNCTION(Reliable, Server, WithValidation)
+	void MyServerFunction();
+	void MyServerFunction_Implementation();
+	bool MyServerFunction_Validate();
 };
 
