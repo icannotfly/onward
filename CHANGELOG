@@ -27,3 +27,6 @@ changelog
 ###2016-08
 - 15: updated engine to 4.12.5.
 - 24: moved git's root folder, altered a bunch in .gitignore
+- 28: updated some depreciated function calls. worked a bit on replication. added player health in current/total fashion, and added a debugbar to display it.
+- 30: worked a little on characters taking damage
+- 31: more work on damage-taking and death.
