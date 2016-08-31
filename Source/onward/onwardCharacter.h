@@ -18,6 +18,8 @@ class AonwardCharacter : public ACharacter
 public:
 	AonwardCharacter();
 
+	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -67,6 +69,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void PossessedBy(AController *NewController) override;
+
 
 
 	//
@@ -100,6 +104,26 @@ private:
 	//called when sprint key is released, asks pawn to stop sprinting
 	void Input_RequestSprintStop();
 
+
+
+	//
+	// vitals
+	//
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float HealthCurrent = 75.0;
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float HealthTotal =  100.0;
+
+	//are we alive?
+	bool bIsAlive = false;
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetHealthCurrent();
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetHealthTotal();
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
+
+	//called when the character dies, handles everything related to death
+	void HandleDeath();
 
 
 	//

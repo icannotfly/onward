@@ -1,6 +1,7 @@
 // Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
 
 #include "onward.h"
+#include "UnrealNetwork.h"
 #include "onwardCharacter.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -74,6 +75,18 @@ void AonwardCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAction("Sprint", IE_Pressed, this, &AonwardCharacter::Input_RequestSprintStart);
 	InputComponent->BindAction("Sprint", IE_Released, this, &AonwardCharacter::Input_RequestSprintStop);
 }
+
+
+
+void AonwardCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Replicate to everyone
+	DOREPLIFETIME(AonwardCharacter, HealthCurrent);
+	DOREPLIFETIME(AonwardCharacter, HealthTotal);
+}
+
 
 
 void AonwardCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
@@ -151,6 +164,16 @@ void AonwardCharacter::BeginPlay()
 
 
 
+void AonwardCharacter::PossessedBy(AController *NewController)
+{
+	Super::PossessedBy(NewController);
+
+	//not sure if this is the optimal place to do this but whatevs
+	bIsAlive = true;
+}
+
+
+
 void AonwardCharacter::Input_ScrollUp()
 {
 	if (GetCameraBoom()->TargetArmLength > 100.0)
@@ -208,6 +231,88 @@ void AonwardCharacter::Input_RequestSprintStart()
 void AonwardCharacter::Input_RequestSprintStop()
 {
 	UE_LOG(HelloWorld, Log, TEXT("sprint stop  requested"));
+}
+
+
+
+float AonwardCharacter::GetHealthCurrent()
+{
+	return HealthCurrent;
+}
+
+
+
+float AonwardCharacter::GetHealthTotal()
+{
+	return HealthTotal;
+}
+
+
+
+float AonwardCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	//calculate damage
+	float FinalDamageAmount = DamageAmount;
+
+	if (FinalDamageAmount == 0)
+	{
+		//no change
+		UE_LOG(LogCombat, Warning, TEXT("zero damage dealt"));
+	}
+	else
+	{
+		HealthCurrent -= FinalDamageAmount;
+
+		//log the damage to the in-game-viewable console (hit tilde twice)
+		FString message = GetName();
+		message += " took ";
+		message += FString::SanitizeFloat(FinalDamageAmount);
+		message += " ";
+		message += DamageEvent.DamageTypeClass != nullptr ? DamageEvent.DamageTypeClass->GetName() : "unknown";
+		message += " damage (";
+		message += FString::SanitizeFloat(0.0);
+		message += " mitigated) from ";
+		message += DamageCauser->GetName();
+		GetGameInstance()->GetLocalPlayers()[0]->GetPlayerController(GetWorld())->ClientMessage(message);
+
+		if (FinalDamageAmount > 0)
+		{
+			//damage
+			if (HealthCurrent <= 0)
+			{
+				//death
+				HealthCurrent = 0;
+
+				HandleDeath();
+			}
+		}
+		else
+		{
+			//healing
+			if (HealthCurrent > HealthTotal)
+			{
+				//no overheal
+				HealthCurrent = HealthTotal;
+			}
+		}
+	}
+
+	return FinalDamageAmount;
+}
+
+
+
+void AonwardCharacter::HandleDeath()
+{
+	bIsAlive = false;
+
+	FString message = GetName();
+	message += " died!";
+
+	UE_LOG(LogCombat, Warning, TEXT("%s"), *(message));
+	GetGameInstance()->GetLocalPlayers()[0]->GetPlayerController(GetWorld())->ClientMessage(message);
 }
 
 
