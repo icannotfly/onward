@@ -22,6 +22,12 @@
 
 
 
+//thanks, rama!
+#define CURR_CLASS FString(__FUNCTION__).Left(FString(__FUNCTION__).Find(TEXT(":"))) //will print current class
+#define CURR_FUNCTION FString(__FUNCTION__).Right(FString(__FUNCTION__).Len() - FString(__FUNCTION__).Find(TEXT("::")) - 2 ) //will print current function
+#define CURR_LINE FString::FromInt(__LINE__)
+
+
 
 DECLARE_LOG_CATEGORY_EXTERN(HelloWorld, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogWorldTime, Log, All);
