@@ -195,3 +195,17 @@ void AonwardGameMode::ForwardTimeTo(FTimestamp iTargetTime)
 		return;
 	}
 }
+
+
+
+void AonwardGameMode::AddHealth(float HealthAmount)
+{
+	Cast<AonwardCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->TakeDamage((HealthAmount * -1.0), FDamageEvent::FDamageEvent(), nullptr, this);
+}
+
+
+
+void AonwardGameMode::RemoveHealth(float HealthAmount)
+{
+	Cast<AonwardCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->TakeDamage(HealthAmount, FDamageEvent::FDamageEvent(), nullptr, this);
+}

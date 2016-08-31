@@ -32,6 +32,12 @@ public:
 
 	//forward time to the specified point
 	UFUNCTION() void ForwardTimeTo(FTimestamp iTargetTime);
+
+	//add the specified amount of health to the player
+	UFUNCTION(exec) void AddHealth(float HealthAmount);
+
+	//remove the specified amout of heath from the player - can kill
+	UFUNCTION(exec) void RemoveHealth(float HealthAmount);
 };
 
 
