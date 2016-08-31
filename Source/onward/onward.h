@@ -23,6 +23,8 @@
 
 
 //thanks, rama!
+//use like:
+// UE_LOG(HelloWorld, Log, TEXT("%s::%s() (%s)"), *(CURR_CLASS), *(CURR_FUNCTION), *(CURR_LINE));
 #define CURR_CLASS FString(__FUNCTION__).Left(FString(__FUNCTION__).Find(TEXT(":"))) //will print current class
 #define CURR_FUNCTION FString(__FUNCTION__).Right(FString(__FUNCTION__).Len() - FString(__FUNCTION__).Find(TEXT("::")) - 2 ) //will print current function
 #define CURR_LINE FString::FromInt(__LINE__)
@@ -31,5 +33,6 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(HelloWorld, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogWorldTime, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogCombat, Log, All);
 
 #endif
