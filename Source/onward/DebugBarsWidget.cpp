@@ -1,9 +1,10 @@
 #include "onward.h"
+#include "onwardCharacter.h"
 #include "DebugBarsWidget.h"
 #include "onwardHUD.h"
 
 #define LOCTEXT_NAMESPACE "SDebugBarsWidget"
-#define PADDING 6,4
+#define PADDING 6,4 // horiz, vert
 
 void SDebugBarsWidget::Construct(const FArguments& InArgs)
 {
@@ -13,6 +14,8 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 
 	WorldTime.Bind(this, &SDebugBarsWidget::GetWorldTime);
 	WorldSeason.Bind(this, &SDebugBarsWidget::GetWorldSeason);
+
+	PlayerHealthString.Bind(this, &SDebugBarsWidget::GetPlayerHealthString);
 
 
 
@@ -33,7 +36,9 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 		//.Padding(FMargin(8))
 		[
 			SNew(SVerticalBox)
-			+ SVerticalBox::Slot() .Padding(6,2) //horiz, vert
+
+			// world time of day
+			+ SVerticalBox::Slot() .Padding(PADDING)
 			[
 				SNew(SOverlay)
 				+ SOverlay::Slot()
@@ -50,7 +55,9 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 					.ShadowOffset(FIntPoint(1, 1))
 				]
 			]
-			+ SVerticalBox::Slot() .Padding(6,2)
+
+			// world time of year
+			+ SVerticalBox::Slot() .Padding(PADDING)
 			[
 				SNew(SOverlay)
 				+ SOverlay::Slot()
@@ -59,12 +66,31 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 					.Percent(this, &SDebugBarsWidget::GetWorldTimeOfYear)
 				]
 				+ SOverlay::Slot()
-					.Padding(PADDING)
+				.Padding(PADDING)
 				[
 					SNew(STextBlock)
 					.Text(WorldSeason)
 					.ShadowColorAndOpacity(FLinearColor::Black)
 					.ShadowOffset(FIntPoint(1, 1))
+				]
+			]
+
+			// player health
+			+ SVerticalBox::Slot().Padding(PADDING)
+			[
+				SNew(SOverlay)
+				+ SOverlay::Slot()
+				[
+					SNew(SProgressBar)
+					.Percent(this, &SDebugBarsWidget::GetPlayerHealthPercentage) // ! change this !
+				]
+				+ SOverlay::Slot()
+				.Padding(PADDING)
+				[
+					SNew(STextBlock)
+					.Text(GetPlayerHealthString())
+				.ShadowColorAndOpacity(FLinearColor::Black)
+				.ShadowOffset(FIntPoint(1, 1))
 				]
 			]
 
@@ -108,9 +134,40 @@ FText SDebugBarsWidget::GetWorldSeason() const
 }
 
 
+
 TOptional<float> SDebugBarsWidget::GetWorldTimeOfYear() const
 {
 	UonwardGameInstance* GI = Cast<UonwardGameInstance>(OwnerHUD->GetGameInstance());
 	if (GI) { return GI->GetWorldTime()->GetTimeOfYear(); }
+	return 0.5;
+}
+
+
+
+FText SDebugBarsWidget::GetPlayerHealthString() const
+{
+	UonwardGameInstance* GI = Cast<UonwardGameInstance>(OwnerHUD->GetGameInstance());
+	if (GI)
+	{
+		APlayerController* PC = GI->GetFirstLocalPlayerController();
+		FString Ret = "";
+		Ret += FString::SanitizeFloat(Cast<AonwardCharacter>(PC->GetPawn())->GetHealthCurrent()); // this will crash if this cast fails for some reason
+		Ret += " / ";
+		Ret += FString::SanitizeFloat(Cast<AonwardCharacter>(PC->GetPawn())->GetHealthTotal());
+		return FText::FromString(Ret);
+	}
+	return FText::FromString("    /    ");
+}
+
+
+
+TOptional<float> SDebugBarsWidget::GetPlayerHealthPercentage() const
+{
+	UonwardGameInstance* GI = Cast<UonwardGameInstance>(OwnerHUD->GetGameInstance());
+	if (GI)
+	{
+		APlayerController* PC = GI->GetFirstLocalPlayerController();
+		return Cast<AonwardCharacter>(PC->GetPawn())->GetHealthCurrent() / Cast<AonwardCharacter>(PC->GetPawn())->GetHealthTotal();
+	}
 	return 0.5;
 }

@@ -51,6 +51,15 @@ private:
 	TOptional<float> GetWorldTimeOfYear() const;
 
 
+	//player health string
+	TAttribute<FText> PlayerHealthString;
+	FText GetPlayerHealthString() const;
+
+	//player health percentage
+	TAttribute<float> PlayerHealthPercentage;
+	TOptional<float> GetPlayerHealthPercentage() const;
+
+
 
 	/**
 	* A reference to the Slate Style used for this HUD's widgets.
