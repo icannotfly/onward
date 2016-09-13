@@ -21,10 +21,6 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 
 	//HUDStyle = &FMenuStyles::Get().GetWidgetStyle<FGlobalStyle>("Global");
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/////If the code below doesn't look like C++ to you it's because it (sort-of) isn't,
-	/////Slate makes extensive use of the C++ Prerocessor(macros) and operator overloading,
-	/////Epic is trying to make our lives easier, look-up the macro/operator definitions to see why.
 	ChildSlot
 	.VAlign(VAlign_Fill)
 	.HAlign(HAlign_Fill)
@@ -75,22 +71,35 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 				]
 			]
 
-			// player health
+			// spacer
 			+ SVerticalBox::Slot().Padding(PADDING)
 			[
 				SNew(SOverlay)
 				+ SOverlay::Slot()
+				.Padding(PADDING)
+				[
+					SNew(STextBlock)
+					.Text(LOCTEXT("blank"," "))
+				]
+			]
+
+			// player health
+			+ SVerticalBox::Slot().Padding(PADDING)
+				[
+					SNew(SOverlay)
+					+ SOverlay::Slot()
 				[
 					SNew(SProgressBar)
-					.Percent(this, &SDebugBarsWidget::GetPlayerHealthPercentage) // ! change this !
+					.Percent(this, &SDebugBarsWidget::GetPlayerHealthPercentage)
+					.FillColorAndOpacity(FSlateColor::FSlateColor(FLinearColor::Red))
 				]
 				+ SOverlay::Slot()
 				.Padding(PADDING)
 				[
 					SNew(STextBlock)
-					.Text(GetPlayerHealthString())
-				.ShadowColorAndOpacity(FLinearColor::Black)
-				.ShadowOffset(FIntPoint(1, 1))
+					.Text(PlayerHealthString)
+					.ShadowColorAndOpacity(FLinearColor::Black)
+					.ShadowOffset(FIntPoint(1, 1))
 				]
 			]
 
@@ -149,11 +158,16 @@ FText SDebugBarsWidget::GetPlayerHealthString() const
 	UonwardGameInstance* GI = Cast<UonwardGameInstance>(OwnerHUD->GetGameInstance());
 	if (GI)
 	{
-		APlayerController* PC = GI->GetFirstLocalPlayerController();
-		FString Ret = "";
-		Ret += FString::SanitizeFloat(Cast<AonwardCharacter>(PC->GetPawn())->GetHealthCurrent()); // this will crash if this cast fails for some reason
-		Ret += " / ";
-		Ret += FString::SanitizeFloat(Cast<AonwardCharacter>(PC->GetPawn())->GetHealthTotal());
+		FString Ret = "NO OWNER";
+
+		APlayerController* PC = OwnerHUD->PlayerOwner;
+		if (PC)
+		{
+			Ret = "HP: ";
+			Ret += FString::SanitizeFloat(Cast<AonwardCharacter>(PC->GetPawn())->GetHealthCurrent()); // this will crash if this cast fails
+			Ret += " / ";
+			Ret += FString::SanitizeFloat(Cast<AonwardCharacter>(PC->GetPawn())->GetHealthTotal());
+		}
 		return FText::FromString(Ret);
 	}
 	return FText::FromString("    /    ");
@@ -166,7 +180,7 @@ TOptional<float> SDebugBarsWidget::GetPlayerHealthPercentage() const
 	UonwardGameInstance* GI = Cast<UonwardGameInstance>(OwnerHUD->GetGameInstance());
 	if (GI)
 	{
-		APlayerController* PC = GI->GetFirstLocalPlayerController();
+		APlayerController* PC = OwnerHUD->PlayerOwner;
 		return Cast<AonwardCharacter>(PC->GetPawn())->GetHealthCurrent() / Cast<AonwardCharacter>(PC->GetPawn())->GetHealthTotal();
 	}
 	return 0.5;
