@@ -5,6 +5,7 @@
 
 //#include "EngineMinimal.h"
 #include "Engine.h" //needed for GEngine calls
+#include "Net/UnrealNetwork.h" //needed for teabagging friends
 
 
 
