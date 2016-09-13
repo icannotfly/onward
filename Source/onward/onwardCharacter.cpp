@@ -256,6 +256,7 @@ float AonwardCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const
 	//calculate damage
 	float FinalDamageAmount = DamageAmount;
 
+	//apply damage
 	if (FinalDamageAmount == 0)
 	{
 		//no change
@@ -275,6 +276,8 @@ float AonwardCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const
 		message += FString::SanitizeFloat(0.0);
 		message += " mitigated) from ";
 		message += DamageCauser->GetName();
+
+		UE_LOG(LogCombat, Log, TEXT("%s  Health now %f / %f"), *(message), HealthCurrent, HealthTotal);
 		GetGameInstance()->GetLocalPlayers()[0]->GetPlayerController(GetWorld())->ClientMessage(message);
 
 		if (FinalDamageAmount > 0)
