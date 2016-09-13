@@ -158,16 +158,29 @@ FText SDebugBarsWidget::GetPlayerHealthString() const
 	UonwardGameInstance* GI = Cast<UonwardGameInstance>(OwnerHUD->GetGameInstance());
 	if (GI)
 	{
-		FString Ret = "NO OWNER";
+		FString Ret = " ";
 
 		APlayerController* PC = OwnerHUD->PlayerOwner;
 		if (PC)
 		{
-			Ret = "HP: ";
-			Ret += FString::SanitizeFloat(Cast<AonwardCharacter>(PC->GetPawn())->GetHealthCurrent()); // this will crash if this cast fails
-			Ret += " / ";
-			Ret += FString::SanitizeFloat(Cast<AonwardCharacter>(PC->GetPawn())->GetHealthTotal());
+			AonwardCharacter *C = Cast<AonwardCharacter>(PC->GetPawn());
+			if(C)
+			{
+				Ret = "HP: ";
+				Ret += FString::SanitizeFloat(C->GetHealthCurrent());
+				Ret += " / ";
+				Ret += FString::SanitizeFloat(C->GetHealthTotal());
+			}
+			else
+			{
+				Ret = "NO PAWN";
+			}
 		}
+		else
+		{
+			Ret = "NO OWNER";
+		}
+
 		return FText::FromString(Ret);
 	}
 	return FText::FromString("    /    ");
@@ -181,7 +194,14 @@ TOptional<float> SDebugBarsWidget::GetPlayerHealthPercentage() const
 	if (GI)
 	{
 		APlayerController* PC = OwnerHUD->PlayerOwner;
-		return Cast<AonwardCharacter>(PC->GetPawn())->GetHealthCurrent() / Cast<AonwardCharacter>(PC->GetPawn())->GetHealthTotal();
+		if (PC)
+		{
+			AonwardCharacter *C = Cast<AonwardCharacter>(PC->GetPawn());
+			if (C)
+			{
+				return C->GetHealthCurrent() / C->GetHealthTotal();
+			}
+		}
 	}
 	return 0.5;
 }
