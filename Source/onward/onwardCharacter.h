@@ -110,15 +110,15 @@ private:
 	// vitals
 	//
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float HealthCurrent = 75.0;
-	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float HealthTotal =  100.0;
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float HealthCurrent = 100.0;
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float HealthTotal =   100.0;
 
 	//are we alive?
 	bool bIsAlive = false;
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetHealthCurrent();
-	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetHealthTotal();
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetHealthCurrent() const;
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetHealthTotal() const;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
 

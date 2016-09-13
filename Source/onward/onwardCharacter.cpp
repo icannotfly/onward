@@ -235,14 +235,14 @@ void AonwardCharacter::Input_RequestSprintStop()
 
 
 
-float AonwardCharacter::GetHealthCurrent()
+float AonwardCharacter::GetHealthCurrent() const
 {
 	return HealthCurrent;
 }
 
 
 
-float AonwardCharacter::GetHealthTotal()
+float AonwardCharacter::GetHealthTotal() const
 {
 	return HealthTotal;
 }
