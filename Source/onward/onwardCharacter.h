@@ -100,11 +100,27 @@ protected:
 
 private:
 
-	//called when sprint key is pressed, asks pawn to start sprinting
-	void Input_RequestSprintStart();
+	//called when sprint key is pressed, asks pawn to start sprinting - note that the pawn can deny our request based on lack of energy or some terrain consideration or something
+	void RequestStartSprinting();
 
 	//called when sprint key is released, asks pawn to stop sprinting
-	void Input_RequestSprintStop();
+	void RequestStopSprinting();
+
+	//set sprinting, either start or stop depending on bNewSprinting
+	void SetSprinting(bool bNewSprinting);
+
+	//like SetSprinting(), but done on the server
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_SetSprinting(bool bNewSprinting);
+
+	//has our controller or human requested a sprint?
+	bool bWantsToSprint = false;
+
+public:
+
+	//are we currently sprinting?
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	bool IsSprinting() const;
 
 
 

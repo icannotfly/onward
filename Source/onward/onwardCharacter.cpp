@@ -73,8 +73,8 @@ void AonwardCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	InputComponent->BindAction("CameraMoveOut", IE_Pressed, this, &AonwardCharacter::Input_ScrollDown);
 
 	//movement - sprint
-	InputComponent->BindAction("Sprint", IE_Pressed, this, &AonwardCharacter::Input_RequestSprintStart);
-	InputComponent->BindAction("Sprint", IE_Released, this, &AonwardCharacter::Input_RequestSprintStop);
+	InputComponent->BindAction("Sprint", IE_Pressed, this, &AonwardCharacter::RequestStartSprinting);
+	InputComponent->BindAction("Sprint", IE_Released, this, &AonwardCharacter::RequestStopSprinting);
 }
 
 
@@ -107,6 +107,22 @@ void AonwardCharacter::Tick(float DeltaSeconds)
 			derp += GetName();
 			GEngine->AddOnScreenDebugMessage(-1, -1, FColor::White, *(derp));
 		}
+	}
+
+	//sprinting
+	if (bWantsToSprint && !IsSprinting())
+	{
+		SetSprinting(true);
+	}
+
+	//debug
+	if (IsSprinting())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, -1, FColor::White, "sprinting");
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, -1, FColor::White, "not sprinting");
 	}
 }
 
@@ -242,18 +258,61 @@ void AonwardCharacter::Input_ScrollDown()
 	}
 }
 
-
-
-void AonwardCharacter::Input_RequestSprintStart()
+void AonwardCharacter::RequestStartSprinting()
 {
-	UE_LOG(HelloWorld, Log, TEXT("sprint start requested"));
+	SetSprinting(true);
 }
 
-
-
-void AonwardCharacter::Input_RequestSprintStop()
+void AonwardCharacter::RequestStopSprinting()
 {
-	UE_LOG(HelloWorld, Log, TEXT("sprint stop  requested"));
+	SetSprinting(false);
+}
+
+void AonwardCharacter::SetSprinting(bool bNewSprinting)
+{
+	bWantsToSprint = bNewSprinting;
+
+	//un-prone, un-crouch, all that stuff
+	//stop in-progress actions
+
+	FString in = bWantsToSprint ? "true" : "false";
+	UE_LOG(LogPlayerMovement, Warning, TEXT("input is %s "), *(in));
+
+	if (Role < ROLE_Authority)
+	{
+		Server_SetSprinting(bNewSprinting);
+	}
+}
+
+void AonwardCharacter::Server_SetSprinting_Implementation(bool bNewSprinting)
+{
+	UE_LOG(HelloWorld, Warning, TEXT("wtwetwetwe"));
+	SetSprinting(bNewSprinting);
+
+	if (bNewSprinting)
+	{
+		UE_LOG(LogPlayerMovement, Log, TEXT("%s starting to sprint"), *(GetName()));
+	}
+	else
+	{
+		UE_LOG(LogPlayerMovement, Log, TEXT("%s stopping sprinting"), *(GetName()));
+	}
+}
+
+bool AonwardCharacter::Server_SetSprinting_Validate(bool bNewSprinting)
+{
+	//TODO check to see if we have enough energy to start sprinting, which means //TODO implement energy
+	return true;		//is this where we should check to see if we have enough energy?
+}
+
+bool AonwardCharacter::IsSprinting() const
+{
+	if (!GetCharacterMovement())
+	{
+		return false;
+	}
+
+	return bWantsToSprint;		//TODO and other conditions, check looman's code line 366
 }
 
 
@@ -263,14 +322,10 @@ float AonwardCharacter::GetHealthCurrent() const
 	return HealthCurrent;
 }
 
-
-
 float AonwardCharacter::GetHealthTotal() const
 {
 	return HealthTotal;
 }
-
-
 
 float AonwardCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
@@ -327,8 +382,6 @@ float AonwardCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const
 
 	return FinalDamageAmount;
 }
-
-
 
 void AonwardCharacter::HandleDeath()
 {
