@@ -159,7 +159,7 @@ void AonwardCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	//attach camera to thirdperson target
-	GetCameraBoom()->SetupAttachment(GetMesh(), "ThirdpersonCameraTarget"/*, EAttachLocation::SnapToTarget*/);
+	GetCameraBoom()->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,"ThirdpersonCameraTarget");
 }
 
 
@@ -186,7 +186,7 @@ void AonwardCharacter::Input_ScrollUp()
 		//zoomed in all the way
 		bCameraIsFirstperson = true;
 
-		GetCameraBoom()->SetupAttachment(GetMesh(), "eyes"/*, EAttachLocation::SnapToTarget*/);
+		GetCameraBoom()->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "eyes");
 		GetCameraBoom()->TargetArmLength = 0;
 		
 		//and move camera and character together
@@ -200,7 +200,7 @@ void AonwardCharacter::Input_ScrollUp()
 
 void AonwardCharacter::Input_ScrollDown()
 {
-	GetCameraBoom()->SetupAttachment(GetMesh(), "ThirdpersonCameraTarget"/*, EAttachLocation::SnapToTarget*/);
+	GetCameraBoom()->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "ThirdpersonCameraTarget");
 
 	//move camera seperately of character
 	bUseControllerRotationPitch = false;
