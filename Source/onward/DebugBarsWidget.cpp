@@ -103,6 +103,18 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 				]
 			]
 
+			// spacer
+
+						
+			// prone/crouch/standing
+
+
+			// walk/run/sprint
+
+
+			// movement speed
+
+
 //			SNew(STextBlock)
 //			//.ShadowColorAndOpacity(FLinearColor::Black)
 //			.ColorAndOpacity(FLinearColor::White)
