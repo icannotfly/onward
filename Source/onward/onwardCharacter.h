@@ -28,6 +28,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
 
 	/** Called for forwards/backward input */

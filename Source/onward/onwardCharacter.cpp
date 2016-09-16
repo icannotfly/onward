@@ -2,6 +2,7 @@
 
 #include "onward.h"
 #include "UnrealNetwork.h"
+#include "onwardGameInstance.h" //only temporary for testing to see if the world time actually is being replicated
 #include "onwardCharacter.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -85,6 +86,28 @@ void AonwardCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & 
 	// Replicate to everyone
 	DOREPLIFETIME(AonwardCharacter, HealthCurrent);
 	DOREPLIFETIME(AonwardCharacter, HealthTotal);
+}
+
+
+
+void AonwardCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	//temp, for debugging
+	//TODO delete me
+	if (Controller && Controller->IsLocalController()) //pretty sure this is a test to see if we're human
+	{
+		if (Role == ROLE_Authority)
+		{
+			FString derp;
+			derp = "AUTH:    ";
+			derp += Cast<UonwardGameInstance>(GetGameInstance())->GetWorldTime()->ToString();
+			derp += "    ";
+			derp += GetName();
+			GEngine->AddOnScreenDebugMessage(-1, -1, FColor::White, *(derp));
+		}
+	}
 }
 
 
@@ -322,7 +345,7 @@ void AonwardCharacter::HandleDeath()
 
 void AonwardCharacter::MyServerFunction_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("hello there - called on client and executed on server."));
+	GEngine->AddOnScreenDebugMessage(-1, -1, FColor::White, TEXT("hello there - called on client and executed on server."));
 }
 
 
