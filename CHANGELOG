@@ -34,3 +34,4 @@ changelog
 ###2016-09
 - 13: made health bar red and added a spacer to the debug bars. worked a bit more on multiplayer code.
 - 15: fixed up some depreciated AttachTo() calls. added basic sprinting code but it doesnt actually change the player's speed yet.
+- 26: moved eye position on character. lowered map killZ. added a movement speed debug bar.
