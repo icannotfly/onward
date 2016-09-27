@@ -4,7 +4,9 @@
 #include "onwardHUD.h"
 
 #define LOCTEXT_NAMESPACE "SDebugBarsWidget"
+#define PADDING_OUTER 8,2
 #define PADDING 6,4 // horiz, vert
+#define MAX_MOVEMENT_SPEED 800.0
 
 void SDebugBarsWidget::Construct(const FArguments& InArgs)
 {
@@ -16,6 +18,9 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 	WorldSeason.Bind(this, &SDebugBarsWidget::GetWorldSeason);
 
 	PlayerHealthString.Bind(this, &SDebugBarsWidget::GetPlayerHealthString);
+	
+	PlayerMovementStatusString.Bind(this, &SDebugBarsWidget::GetPlayerMovementStatusString);
+	//PlayerMovementVelocity.Bind(this, &SDebugBarsWidget::GetPlayerMovementVelocity);
 
 
 
@@ -34,7 +39,7 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 			SNew(SVerticalBox)
 
 			// world time of day
-			+ SVerticalBox::Slot() .Padding(PADDING)
+			+ SVerticalBox::Slot() .Padding(PADDING_OUTER)
 			[
 				SNew(SOverlay)
 				+ SOverlay::Slot()
@@ -53,7 +58,7 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 			]
 
 			// world time of year
-			+ SVerticalBox::Slot() .Padding(PADDING)
+			+ SVerticalBox::Slot() .Padding(PADDING_OUTER)
 			[
 				SNew(SOverlay)
 				+ SOverlay::Slot()
@@ -72,11 +77,11 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 			]
 
 			// spacer
-			+ SVerticalBox::Slot().Padding(PADDING)
+			+ SVerticalBox::Slot().Padding(0,0)
 			[
 				SNew(SOverlay)
 				+ SOverlay::Slot()
-				.Padding(PADDING)
+				.Padding(0,0)
 				[
 					SNew(STextBlock)
 					.Text(LOCTEXT("blank"," "))
@@ -84,10 +89,10 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 			]
 
 			// player health
-			+ SVerticalBox::Slot().Padding(PADDING)
-				[
-					SNew(SOverlay)
-					+ SOverlay::Slot()
+			+ SVerticalBox::Slot().Padding(PADDING_OUTER)
+			[
+				SNew(SOverlay)
+				+ SOverlay::Slot()
 				[
 					SNew(SProgressBar)
 					.Percent(this, &SDebugBarsWidget::GetPlayerHealthPercentage)
@@ -104,9 +109,37 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 			]
 
 			// spacer
+			+ SVerticalBox::Slot().Padding(0,0)
+			[
+				SNew(SOverlay)
+				+ SOverlay::Slot()
+				.Padding(0,0)
+				[
+					SNew(STextBlock)
+					.Text(LOCTEXT("blank", " "))
+				]
+			]
 
 						
 			// prone/crouch/standing
+			+SVerticalBox::Slot().Padding(PADDING_OUTER)
+			[
+				SNew(SOverlay)
+				+ SOverlay::Slot()
+				[
+					SNew(SProgressBar)
+					.Percent(this, &SDebugBarsWidget::GetPlayerMovementVelocityXYPercentage)
+					//.FillColorAndOpacity(FSlateColor::FSlateColor(FLinearColor::Red))
+				]
+				+ SOverlay::Slot()
+				.Padding(PADDING)
+				[
+					SNew(STextBlock)
+					.Text(PlayerMovementStatusString)
+					.ShadowColorAndOpacity(FLinearColor::Black)
+					.ShadowOffset(FIntPoint(1, 1))
+				]
+			]
 
 
 			// walk/run/sprint
@@ -216,4 +249,62 @@ TOptional<float> SDebugBarsWidget::GetPlayerHealthPercentage() const
 		}
 	}
 	return 0.5;
+}
+
+
+
+FText SDebugBarsWidget::GetPlayerMovementStatusString() const
+{
+	FString ret = "";
+
+	UonwardGameInstance* GI = Cast<UonwardGameInstance>(OwnerHUD->GetGameInstance());
+	if (GI)
+	{
+		APlayerController* PC = OwnerHUD->PlayerOwner;
+		if (PC)
+		{
+			AonwardCharacter *C = Cast<AonwardCharacter>(PC->GetPawn());
+			if (C)
+			{
+				ret.AppendInt(GetPlayerMovementVelocityXY().Get(0));
+			}
+		}
+	}
+
+	ret += " u/s";
+	
+	return FText::FromString(ret);
+}
+
+
+
+TOptional<float> SDebugBarsWidget::GetPlayerMovementVelocityXY() const
+{
+	UonwardGameInstance* GI = Cast<UonwardGameInstance>(OwnerHUD->GetGameInstance());
+	if (GI)
+	{
+		APlayerController* PC = OwnerHUD->PlayerOwner;
+		if (PC)
+		{
+			AonwardCharacter *C = Cast<AonwardCharacter>(PC->GetPawn());
+			if (C)
+			{
+				FVector v = C->GetMovementComponent()->Velocity;
+				v.Z = 0;
+
+				return FVector::Dist(FVector(0, 0, 0), v);
+
+				//return FVector::Dist(FVector(0, 0, 0), C->GetMovementComponent()->Velocity);
+			}
+		}
+	}
+
+	return 0.0;
+}
+
+
+
+TOptional<float> SDebugBarsWidget::GetPlayerMovementVelocityXYPercentage() const
+{
+	return GetPlayerMovementVelocityXY().Get(0) / MAX_MOVEMENT_SPEED;
 }
