@@ -119,14 +119,14 @@ private:
 public:
 
 	//are we currently sprinting?
-	UFUNCTION(BlueprintCallable, Category = "Movement")
-	bool IsSprinting() const;
+	UFUNCTION(BlueprintCallable, Category = "Movement") bool IsSprinting() const;
 
 
 
 	//
 	// vitals
 	//
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float HealthCurrent = 100.0;
 	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float HealthTotal =   100.0;
