@@ -63,8 +63,108 @@ public:
 
 
 
+	// +
+	FTimestamp operator + (const FTimestamp Other) const
+	{
+		return FTimestamp(
+			TotalSeconds + Other.GetTotalSeconds(),
+			Remainder + Other.GetRemainder()
+		);
+	}
+
+	FTimestamp operator + (const FTimestamp *Other) const
+	{
+		return FTimestamp(
+			TotalSeconds + Other->GetTotalSeconds(),
+			Remainder + Other->GetRemainder()
+		);
+	}
+
+	// -
+	FTimestamp operator - (const FTimestamp Other) const
+	{
+		if (this > Other)
+		{
+			return FTimestamp(
+				TotalSeconds - Other.GetTotalSeconds(),
+				Remainder - Other.GetRemainder()
+			);
+		}
+		else
+		{
+			return FTimestamp(0, 0);
+		}
+	}
+
+	FTimestamp operator - (const FTimestamp *Other) const
+	{
+		if (this > Other)
+		{
+			return FTimestamp(
+				TotalSeconds - Other->GetTotalSeconds(),
+				Remainder - Other->GetRemainder()
+			);
+		}
+		else
+		{
+			return FTimestamp(0, 0);
+		}
+	}
+
+	// <
+	// <=
+	// >
+	// >=
+
+	// ==
+	bool operator == (const FTimestamp Other) const
+	{
+		return TotalSeconds == Other.GetTotalSeconds() && Remainder == Other.GetRemainder();
+	}
+
+	bool operator == (const FTimestamp *Other) const
+	{
+		return TotalSeconds == Other->GetTotalSeconds() && Remainder == Other->GetRemainder();
+	}
+
+
+	// !=
+	bool operator != (const FTimestamp Other) const
+	{
+		return TotalSeconds != Other.GetTotalSeconds() || Remainder != Other.GetRemainder();
+	}
+
+	bool operator != (const FTimestamp *Other) const
+	{
+		return TotalSeconds != Other->GetTotalSeconds() || Remainder != Other->GetRemainder();
+	}
+
+	// =
+	FTimestamp operator = (const FTimestamp Other) const
+	{
+		return FTimestamp(
+			Other.GetTotalSeconds(),
+			Other.GetRemainder()
+		);
+	}
+
+	FTimestamp operator = (const FTimestamp *Other) const
+	{
+		return FTimestamp(
+			Other->GetTotalSeconds(),
+			Other->GetRemainder()
+		);
+	}
+
+	// +=
+	// -=
+	// *=
+	// /=
+
+
+
 	//returns total seconds
-	const uint64 GetTotalSeconds()
+	const uint64 GetTotalSeconds() const
 	{
 		return TotalSeconds;
 	}
@@ -72,7 +172,7 @@ public:
 
 
 	//returns current remainder
-	const float GetRemainder()
+	const float GetRemainder() const
 	{
 		return Remainder;
 	}
@@ -80,7 +180,7 @@ public:
 
 
 	//returns the current year
-	const uint32 GetYear()
+	const uint32 GetYear() const
 	{
 		CalcDateValues();
 		return Year;
@@ -89,7 +189,7 @@ public:
 
 
 	//returns the current month
-	const uint8 GetMonth()
+	const uint8 GetMonth() const
 	{
 		CalcDateValues();
 		return Month;
@@ -98,7 +198,7 @@ public:
 
 
 	//returns the current day
-	const uint8 GetDay()
+	const uint8 GetDay() const
 	{
 		CalcDateValues();
 		return Day;
@@ -107,7 +207,7 @@ public:
 
 
 	//returns the current hour
-	const uint8 GetHour()
+	const uint8 GetHour() const
 	{
 		CalcDateValues();
 		return Hour;
@@ -116,7 +216,7 @@ public:
 
 
 	//returns the current minute
-	const uint8 GetMinute()
+	const uint8 GetMinute() const
 	{
 		CalcDateValues();
 		return Minute;
@@ -125,7 +225,7 @@ public:
 
 
 	//returns the current second
-	const uint8 GetSecond()
+	const uint8 GetSecond() const
 	{
 		CalcDateValues();
 		return Second;
