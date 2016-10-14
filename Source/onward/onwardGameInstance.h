@@ -22,8 +22,6 @@ private:
 	//sub-1.0 second amount that cannot be expressed in TotalSeconds
 	UPROPERTY() float Remainder = 0.0;
 
-
-
 	//date values
 	UPROPERTY() uint32 Year = 0;
 	UPROPERTY() uint8 Month = 0;
@@ -31,8 +29,6 @@ private:
 	UPROPERTY() uint8 Hour = 0;
 	UPROPERTY() uint8 Minute = 0;
 	UPROPERTY() uint8 Second = 0;
-
-
 
 	//TotalSeconds value when Date values were last updated. for static timestamps, we do not need to update Date values every time they're asked for.
 	UPROPERTY() uint64 DateLastUpdated = 0;
@@ -43,11 +39,15 @@ public:
 
 	FTimestamp(){};
 
+
+
 	FTimestamp(uint64 iTotalSeconds, float iRemainder)
 	{
 		TotalSeconds = iTotalSeconds;
 		Remainder = iRemainder;
 	}
+
+
 
 	//note that values can be more than their respective maximums, but cannot be negative
 	FTimestamp(uint32 iYear, uint8 iMonth, uint8 iDay, uint8 iHour, uint8 iMinute, uint8 iSecond)
@@ -63,9 +63,74 @@ public:
 
 
 
-	const uint64 GetTotalSeconds() { return TotalSeconds; }
-	const float GetRemainder() { return Remainder; }
+	//returns total seconds
+	const uint64 GetTotalSeconds()
+	{
+		return TotalSeconds;
+	}
 
+
+
+	//returns current remainder
+	const float GetRemainder()
+	{
+		return Remainder;
+	}
+
+
+
+	//returns the current year
+	const uint32 GetYear()
+	{
+		CalcDateValues();
+		return Year;
+	}
+
+
+
+	//returns the current month
+	const uint8 GetMonth()
+	{
+		CalcDateValues();
+		return Month;
+	}
+
+
+
+	//returns the current day
+	const uint8 GetDay()
+	{
+		CalcDateValues();
+		return Day;
+	}
+
+
+
+	//returns the current hour
+	const uint8 GetHour()
+	{
+		CalcDateValues();
+		return Hour;
+	}
+
+
+
+	//returns the current minute
+	const uint8 GetMinute()
+	{
+		CalcDateValues();
+		return Minute;
+	}
+
+
+
+	//returns the current second
+	const uint8 GetSecond()
+	{
+		CalcDateValues();
+		return Second;
+	}
+	
 
 
 	//if we have more than a full second in the remainder, add it to the TotalSeconds count
@@ -77,7 +142,7 @@ public:
 			Remainder -= FMath::FloorToFloat(Remainder);
 		}
 	}
-
+	
 
 
 	//add a valid amount of seconds to this timestamp; returns true if successful, false if value passed was negative or otherwise invalid
@@ -97,7 +162,7 @@ public:
 
 		return false;
 	}
-
+	
 
 
 	//adds the specified YMD-HMS to this timestamp. given values must respect lower bounds but going over upper bound will cause them to flow into the next highest value. returns true if time successfully added, false if provided values were invalid or some other error; will log error.
@@ -154,7 +219,7 @@ public:
 		//make a note of when this calculation was done
 		DateLastUpdated = TotalSeconds;
 	}
-
+	
 
 
 	//print this timestamp's value to a human-readable FString. optional int input controlls formatting: 0 (default) = ISO 8601 (YYYY-MM-DD HH:MM:SS), 1 = ISO 8601 with debug info (YYY-MM-DD HH:MM:SS TotalSeconds,Remainder), 2 = ISO 8601 with debug and season (YYY-MM-DD HH:MM:SS TotalSeconds,Remainder Season)
@@ -216,7 +281,7 @@ public:
 
 		return Ret;
 	}
-
+	
 
 
 	//returns an FString containting the current season
@@ -259,6 +324,8 @@ public:
 
 	//returns a float in the range 0.0 (beginning of year) to 1.0 (end of year)
 	float GetTimeOfYear() { return  FMath::Fmod(float(TotalSeconds), GAME_SECONDS_IN_YEAR) / GAME_SECONDS_IN_YEAR; }
+
+
 
 	//returns a float in the range 0.0 (beginning of day, 00:00) to 1.o (end of day, 24:00)
 	float GetTimeOfDay() { return FMath::Fmod(float(TotalSeconds), GAME_SECONDS_IN_DAY) / GAME_SECONDS_IN_DAY; }

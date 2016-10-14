@@ -93,6 +93,36 @@ void AonwardGameMode::Time(FString iTime)
 		UE_LOG(LogWorldTime, Warning, TEXT("%s::Time(): I don't understand what you mean by %s."), *GetName(), *iTime);
 		return;
 	}
+
+
+	UonwardGameInstance* GI = Cast<UonwardGameInstance>(GetGameInstance());
+	if (GI)
+	{
+		FTimestamp* WorldTime = GI->GetWorldTime();
+		if (WorldTime == nullptr)
+		{
+			//log error
+			return;
+		}
+
+		FTimestamp TargetTime;
+
+		//compare current time with target time
+		if (WorldTime->GetHour() > TargetHour)
+		{
+			//if current time is past the target time, we need to advance to the next day
+			TargetTime = FTimestamp(WorldTime->GetYear(), WorldTime->GetMonth(), WorldTime->GetDay() + 1, TargetHour, 0, 0);
+		}
+		else
+		{
+			//if not, just set the hour
+			TargetTime = FTimestamp(WorldTime->GetYear(), WorldTime->GetMonth(), WorldTime->GetDay(), TargetHour, 0, 0);
+		}
+
+		ForwardTimeTo(TargetTime);
+
+		UE_LOG(LogWorldTime, Log, TEXT("%s::%s() %s : time has been advanced to %s"), *(CURR_CLASS), *(CURR_FUNCTION), *(CURR_LINE), *(TargetTime.ToString(0)));
+	}
 }
 
 
