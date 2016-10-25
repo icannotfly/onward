@@ -38,13 +38,29 @@ private:
 public:
 
 	FTimestamp(){};
-
-
+	
 
 	FTimestamp(uint64 iTotalSeconds, float iRemainder)
 	{
 		TotalSeconds = iTotalSeconds;
-		Remainder = iRemainder;
+
+		if (iRemainder < 0.0)
+		{
+			if (TotalSeconds > 1)
+			{
+				Remainder = 1.0 + iRemainder;
+				TotalSeconds -= 1;
+			}
+			else
+			{
+				TotalSeconds = 0;
+				Remainder = 0;
+			}
+		}
+		else
+		{
+			Remainder = iRemainder;
+		}
 	}
 
 
@@ -63,8 +79,31 @@ public:
 
 
 
+	// *
+	template<typename T> FTimestamp operator* (const T &Other)
+	{
+		return FTimestamp(
+			TotalSeconds * Other,
+			Remainder * Other
+		);
+	}
+
+
+
+	// /
+	// note that if you pass this an int, it will truncate the quotient just like int division normally does
+	template<typename T> FTimestamp operator/ (const T &Other)
+	{
+		FTimestamp(
+			TotalSeconds / Other,
+			Remainder / Other + (long double(TotalSeconds) / long double(Other) - TotalSeconds)
+		);
+	}
+
+
+
 	// +
-	FTimestamp operator + (const FTimestamp Other) const
+	FTimestamp operator+ (const FTimestamp &Other) const
 	{
 		return FTimestamp(
 			TotalSeconds + Other.GetTotalSeconds(),
@@ -72,18 +111,13 @@ public:
 		);
 	}
 
-	FTimestamp operator + (const FTimestamp *Other) const
-	{
-		return FTimestamp(
-			TotalSeconds + Other->GetTotalSeconds(),
-			Remainder + Other->GetRemainder()
-		);
-	}
+
 
 	// -
-	FTimestamp operator - (const FTimestamp Other) const
+	// if a-b and a<b, will return 0
+	FTimestamp operator- (const FTimestamp &Other) const
 	{
-		if (this > Other)
+		if (*this > Other)
 		{
 			return FTimestamp(
 				TotalSeconds - Other.GetTotalSeconds(),
@@ -96,75 +130,106 @@ public:
 		}
 	}
 
-	FTimestamp operator - (const FTimestamp *Other) const
-	{
-		if (this > Other)
-		{
-			return FTimestamp(
-				TotalSeconds - Other->GetTotalSeconds(),
-				Remainder - Other->GetRemainder()
-			);
-		}
-		else
-		{
-			return FTimestamp(0, 0);
-		}
-	}
+
 
 	// <
+	bool operator< (const FTimestamp &Other) const
+	{
+		if (TotalSeconds < Other.GetTotalSeconds() || (TotalSeconds < Other.GetTotalSeconds() && Remainder == Other.GetRemainder()))
+		{
+			return true;
+		}
+		return false;
+	}
+
+
+
 	// <=
+	bool operator<= (const FTimestamp &Other) const
+	{
+		if (*this < Other || *this == Other)
+		{
+			return true;
+		}
+		return false;
+	}
+
+
+
 	// >
+	bool operator> (const FTimestamp &Other) const
+	{
+		if (TotalSeconds > Other.GetTotalSeconds() || (TotalSeconds > Other.GetTotalSeconds() && Remainder == Other.GetRemainder()))
+		{
+			return true;
+		}
+		return false;
+	}
+
+
+
 	// >=
+	bool operator>= (const FTimestamp &Other) const
+	{
+		if (*this > Other || *this == Other)
+		{
+			return true;
+		}
+		return false;
+	}
+
+
 
 	// ==
-	bool operator == (const FTimestamp Other) const
+	bool operator== (const FTimestamp &Other) const
 	{
 		return TotalSeconds == Other.GetTotalSeconds() && Remainder == Other.GetRemainder();
 	}
 
-	bool operator == (const FTimestamp *Other) const
-	{
-		return TotalSeconds == Other->GetTotalSeconds() && Remainder == Other->GetRemainder();
-	}
 
 
 	// !=
-	bool operator != (const FTimestamp Other) const
+	bool operator!= (const FTimestamp &Other) const
 	{
 		return TotalSeconds != Other.GetTotalSeconds() || Remainder != Other.GetRemainder();
 	}
 
-	bool operator != (const FTimestamp *Other) const
-	{
-		return TotalSeconds != Other->GetTotalSeconds() || Remainder != Other->GetRemainder();
-	}
-
-	// =
-	FTimestamp operator = (const FTimestamp Other) const
-	{
-		return FTimestamp(
-			Other.GetTotalSeconds(),
-			Other.GetRemainder()
-		);
-	}
-
-	FTimestamp operator = (const FTimestamp *Other) const
-	{
-		return FTimestamp(
-			Other->GetTotalSeconds(),
-			Other->GetRemainder()
-		);
-	}
+	
 
 	// +=
+	FTimestamp operator+= (const FTimestamp &Other) const
+	{
+		return FTimestamp(
+			TotalSeconds + Other.GetTotalSeconds(),
+			TotalSeconds + Other.GetRemainder()
+		);
+	}
+
+
+
 	// -=
+	FTimestamp operator-= (const FTimestamp &Other) const
+	{
+		if (*this > Other)
+		{
+			return FTimestamp(
+				TotalSeconds - Other.GetTotalSeconds(),
+				TotalSeconds - Other.GetRemainder()
+			);
+		}
+
+		FTimestamp ret;
+	}
+
+
+
 	// *=
 	// /=
 
 
 
 	//returns total seconds
-	const uint64 GetTotalSeconds() const
+	uint64 GetTotalSeconds() const
 	{
 		return TotalSeconds;
 	}
@@ -172,7 +237,7 @@ public:
 
 
 	//returns current remainder
-	const float GetRemainder() const
+	float GetRemainder() const
 	{
 		return Remainder;
 	}
@@ -180,7 +245,7 @@ public:
 
 
 	//returns the current year
-	const uint32 GetYear() const
+	uint32 GetYear()
 	{
 		CalcDateValues();
 		return Year;
@@ -189,7 +254,7 @@ public:
 
 
 	//returns the current month
-	const uint8 GetMonth() const
+	uint8 GetMonth()
 	{
 		CalcDateValues();
 		return Month;
@@ -198,7 +263,7 @@ public:
 
 
 	//returns the current day
-	const uint8 GetDay() const
+	uint8 GetDay()
 	{
 		CalcDateValues();
 		return Day;
@@ -207,7 +272,7 @@ public:
 
 
 	//returns the current hour
-	const uint8 GetHour() const
+	uint8 GetHour()
 	{
 		CalcDateValues();
 		return Hour;
@@ -216,7 +281,7 @@ public:
 
 
 	//returns the current minute
-	const uint8 GetMinute() const
+	uint8 GetMinute()
 	{
 		CalcDateValues();
 		return Minute;
@@ -225,7 +290,7 @@ public:
 
 
 	//returns the current second
-	const uint8 GetSecond() const
+	uint8 GetSecond()
 	{
 		CalcDateValues();
 		return Second;
