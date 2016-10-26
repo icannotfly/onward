@@ -40,3 +40,4 @@ changelog
 - 13: fixed the Time command so that it actually works now. started working on some operators but they're not done yet.
 - 23: disabled precomputed lighting.
 - 24: added a bunch of FTimestamp operators, de-const'd some because the compiler was crying, and added a check to the TotalSeconds/Remainder initializer to check for a negative remainder. wrote some tests and fixed some errors they revealed.
+- 25: wrote some more tests, added *= and /= to FTimestamp.
