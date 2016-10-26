@@ -38,6 +38,9 @@ public:
 
 	//remove the specified amout of heath from the player - can kill
 	UFUNCTION(exec) void RemoveHealth(float HealthAmount);
+
+	//do some tests; exact nature depends on the tests contained in this function at the time of compilation
+	UFUNCTION(exec) void DoTests();
 };
 
 
