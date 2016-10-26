@@ -94,7 +94,13 @@ public:
 	// note that if you pass this an int, it will truncate the quotient just like int division normally does
 	template<typename T> FTimestamp operator/ (const T &Other)
 	{
-		FTimestamp(
+		if (Other == 0)
+		{
+			UE_LOG(HelloWorld, Warning, TEXT("FTimestamp was passed a 0 denominator; returning 0."));
+			return FTimestamp(0, 0);
+		}
+
+		return FTimestamp(
 			TotalSeconds / Other,
 			Remainder / Other + (long double(TotalSeconds) / long double(Other) - TotalSeconds)
 		);
@@ -197,34 +203,79 @@ public:
 	
 
 	// +=
-	FTimestamp operator+= (const FTimestamp &Other) const
+	FTimestamp& operator+= (const FTimestamp &Other)
 	{
-		return FTimestamp(
-			TotalSeconds + Other.GetTotalSeconds(),
-			TotalSeconds + Other.GetRemainder()
-		);
+
+		TotalSeconds += Other.GetTotalSeconds();
+		Remainder += Other.GetRemainder();
+		return *this;
 	}
 
 
 
 	// -=
-	FTimestamp operator-= (const FTimestamp &Other) const
+	// if a-b and a<b, will return 0
+	FTimestamp operator-= (const FTimestamp &Other)
 	{
 		if (*this > Other)
 		{
-			return FTimestamp(
-				TotalSeconds - Other.GetTotalSeconds(),
-				TotalSeconds - Other.GetRemainder()
-			);
+			TotalSeconds -= Other.GetTotalSeconds();
+			if (Remainder >= Other.GetRemainder())
+			{
+				Remainder -= Other.GetRemainder();
+			}
+			else
+			{
+				Remainder = 1.0 - Other.GetRemainder();
+				if (TotalSeconds >= 1.0)
+				{
+					TotalSeconds -= 1.0;
+				}
+				else
+				{
+					TotalSeconds = 0.0;
+				}
+			}
 		}
 
-		FTimestamp ret;
+		return *this;
 	}
 
 
 
 	// *=
+	// will not change anything if passed a negative value
+	template<typename T> FTimestamp operator*= (const T &Other)
+	{
+		if (Other < 0.0)
+		{
+			UE_LOG(LogWorldTime, Warning, TEXT("FTimestamp *= called with negative value, returning original value."));
+			return *this;
+		}
+
+		TotalSeconds *= Other;
+		Remainder *= Other;
+		CheckRemainder();
+		return *this;
+	}
+
+
+
 	// /=
+	// will not change anything if passed a negative or 0 value
+	template<typename T> FTimestamp operator/= (const T &Other)
+	{
+		if (Other <= 0.0)
+		{
+			UE_LOG(LogWorldTime, Warning, TEXT("FTimestamp *= called with negative value, returning original value."));
+			return *this;
+		}
+
+		TotalSeconds /= Other;
+		Remainder /= Other;
+		CheckRemainder();
+		return *this;
+	}
 
 
 
