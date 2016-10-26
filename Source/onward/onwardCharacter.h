@@ -15,6 +15,9 @@ class AonwardCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
+
+
 public:
 	AonwardCharacter();
 
@@ -28,7 +31,41 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	//override
 	virtual void Tick(float DeltaSeconds) override;
+
+	/** Returns CameraBoom subobject **/
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	/** Returns FollowCamera subobject **/
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	//override
+	virtual void BeginPlay() override;
+
+	//override
+	virtual void PossessedBy(AController *NewController) override;
+
+	//are we currently sprinting?
+	UFUNCTION(BlueprintCallable, Category = "Movement") bool IsSprinting() const;
+
+	//returns our current health
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetHealthCurrent() const;
+
+	//returns our total health
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetHealthTotal() const;
+
+	//override
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
+
+	//called when the character dies, handles everything related to death
+	void HandleDeath();
+
+	//misc test functions
+	UFUNCTION(Reliable, Server, WithValidation)
+	void MyServerFunction();
+	void MyServerFunction_Implementation();
+	bool MyServerFunction_Validate();
+
 
 protected:
 
@@ -56,35 +93,9 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
-protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	// End of APawn interface
-
-public:
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
-
-
-	virtual void BeginPlay() override;
-
-	virtual void PossessedBy(AController *NewController) override;
-
-
-
-	//
-	// camera
-	//
-private:
-
-	//is camera in firstperson mode?
-	bool bCameraIsFirstperson = false;
-
-
-protected:
 
 	//called on mousewheel scroll up
 	void Input_ScrollUp();
@@ -94,11 +105,10 @@ protected:
 
 
 
-	//
-	// movement
-	//
-
 private:
+
+	//is camera in firstperson mode?
+	bool bCameraIsFirstperson = false;
 
 	//called when sprint key is pressed, asks pawn to start sprinting - note that the pawn can deny our request based on lack of energy or some terrain consideration or something
 	void RequestStartSprinting();
@@ -116,42 +126,13 @@ private:
 	//has our controller or human requested a sprint?
 	bool bWantsToSprint = false;
 
-public:
-
-	//are we currently sprinting?
-	UFUNCTION(BlueprintCallable, Category = "Movement") bool IsSprinting() const;
-
-
-
-	//
-	// vitals
-	//
-
-private:
+	//current health
 	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float HealthCurrent = 100.0;
-	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float HealthTotal =   100.0;
+
+	//total health
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float HealthTotal = 100.0;
 
 	//are we alive?
 	bool bIsAlive = false;
-
-public:
-	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetHealthCurrent() const;
-	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetHealthTotal() const;
-
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
-
-	//called when the character dies, handles everything related to death
-	void HandleDeath();
-
-
-	//
-	// test
-	//
-
-public:
-	UFUNCTION(Reliable, Server, WithValidation)
-	void MyServerFunction();
-	void MyServerFunction_Implementation();
-	bool MyServerFunction_Validate();
 };
 
