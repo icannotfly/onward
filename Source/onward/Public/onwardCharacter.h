@@ -45,6 +45,12 @@ public:
 	//override
 	virtual void PossessedBy(AController *NewController) override;
 
+
+
+	//==========================
+	// vitals
+	//==========================
+
 	//are we currently sprinting?
 	UFUNCTION(BlueprintCallable, Category = "Movement") bool IsSprinting() const;
 
@@ -60,7 +66,35 @@ public:
 	//called when the character dies, handles everything related to death
 	void HandleDeath();
 
-	//misc test functions
+
+	//==========================
+	// movement
+	//==========================
+
+	//returns the sprinting speed modifier
+	float GetSprintingSpeedModifier() const;
+
+
+
+	//==========================
+	// world interaction
+	//==========================
+
+	//use whatever's in focus
+	virtual void Use();
+
+	//server's version of Use()
+	UFUNCTION(Server, Reliable, WithValidation) void ServerUse();
+
+	//returns the UsableActor we're currently looking at, if any. will return NULL or nullptr if none in view (idk which, try testing for nullptr)
+	class AonwardUsableActor* GetUsableInView();
+
+	
+
+	//==========================
+	// misc test functions
+	//==========================
+
 	UFUNCTION(Reliable, Server, WithValidation)
 	void MyServerFunction();
 	void MyServerFunction_Implementation();
@@ -119,6 +153,9 @@ private:
 	//set sprinting, either start or stop depending on bNewSprinting
 	void SetSprinting(bool bNewSprinting);
 
+	//
+	UPROPERTY(EditDefaultsOnly, Category = "ObjectInteraction") float SprintingSpeedModifier;
+
 	//like SetSprinting(), but done on the server
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_SetSprinting(bool bNewSprinting);
@@ -134,5 +171,14 @@ private:
 
 	//are we alive?
 	bool bIsAlive = false;
+	
+	//distance beyone which objects will be considered out of our "reach" and cannot be used
+	UPROPERTY(EditDefaultsOnly, Category = "ObjectInteraction") float MaxUseDistance;
+
+	//true only for the first frame in which we have changed our focus to a new UsableActor
+	bool bHasNewFocus;
+
+	//the actor we're currently staring at like a creepy motherfucker
+	class AonwardUsableActor* FocusedUsableActor;
 };
 

@@ -3,6 +3,7 @@
 #include "onward.h"
 #include "UnrealNetwork.h"
 #include "onwardGameInstance.h" //only temporary for testing to see if the world time actually is being replicated
+#include "onwardUsableActor.h"
 #include "onwardCharacter.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -41,6 +42,9 @@ AonwardCharacter::AonwardCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+	MaxUseDistance = 800;
+	bHasNewFocus = true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -75,6 +79,9 @@ void AonwardCharacter::SetupPlayerInputComponent(class UInputComponent* InputCom
 	//movement - sprint
 	InputComponent->BindAction("Sprint", IE_Pressed, this, &AonwardCharacter::RequestStartSprinting);
 	InputComponent->BindAction("Sprint", IE_Released, this, &AonwardCharacter::RequestStopSprinting);
+
+	//interaction - use
+	InputComponent->BindAction("Use", IE_Pressed, this, &AonwardCharacter::Use);
 }
 
 
@@ -406,4 +413,81 @@ void AonwardCharacter::MyServerFunction_Implementation()
 bool AonwardCharacter::MyServerFunction_Validate()
 {
 	return true; //lol
+}
+
+
+
+float AonwardCharacter::GetSprintingSpeedModifier() const
+{
+	return SprintingSpeedModifier;
+}
+
+
+
+void AonwardCharacter::Use()
+{
+	//only allow to be called on server; if called on client, tell the server to try it
+	if (Role == ROLE_Authority)
+	{
+		UE_LOG(LogInput, Log, TEXT("Use requested as server."));
+
+		AonwardUsableActor* Usable = GetUsableInView();
+		if (Usable)
+		{	
+			Usable->OnUsed(this);
+		}
+	}
+	else
+	{
+		UE_LOG(LogInput, Log, TEXT("Use requested; asking server to Use()."));
+		ServerUse();
+	}
+}
+
+
+
+void AonwardCharacter::ServerUse_Implementation()
+{
+	UE_LOG(LogInput, Log, TEXT("Use request received by server."));
+	Use();
+}
+
+
+
+bool AonwardCharacter::ServerUse_Validate()
+{
+	//TODO
+	return true;
+}
+
+
+
+class AonwardUsableActor* AonwardCharacter::GetUsableInView()
+{
+	if (Controller == NULL || Controller == nullptr)
+	{
+		UE_LOG(LogInput, Warning, TEXT("%s::%s() at line (%s): %s could not find a controller."), *(CURR_CLASS), *(CURR_FUNCTION), *(CURR_LINE), *(GetName()));
+		return nullptr;
+	}
+
+	FVector CameraLocation;
+	FRotator CameraRotation;
+
+	Controller->GetPlayerViewPoint(CameraLocation, CameraRotation);
+	const FVector TraceStart = CameraLocation;
+	const FVector Direction = CameraRotation.Vector();
+	const FVector TraceEnd = TraceStart + (Direction * MaxUseDistance);
+
+	FCollisionQueryParams TraceParams(FName(TEXT("TraseUsableActor")), true, this);
+	TraceParams.bTraceAsyncScene = true;
+	TraceParams.bReturnPhysicalMaterial = false;
+	TraceParams.bTraceComplex = true;
+
+	FHitResult Hit(ForceInit);
+	GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, TraceParams);
+
+	//debug
+	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 1.0f);
+
+	return Cast<AonwardUsableActor>(Hit.GetActor());
 }

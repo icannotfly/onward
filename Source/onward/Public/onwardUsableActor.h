@@ -20,6 +20,18 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	//called when the player starts looking at us
+	virtual void OnBeginFocus();
+
+	//called when the player stops looking at us :(
+	virtual void OnEndFocus();
+
+	//called when the player interacts with us
+	virtual void OnUsed(APawn* InstigatorPawn);
+
 	
 	
+private:
+
+	UPROPERTY(EditDefaultsOnly, Category = "Mesh") UStaticMeshComponent* MeshComp;
 };

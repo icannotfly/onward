@@ -26,3 +26,19 @@ void AonwardUsableActor::Tick( float DeltaTime )
 
 }
 
+void AonwardUsableActor::OnBeginFocus()
+{
+	// Used by custom PostProcess to render outlines
+	MeshComp->SetRenderCustomDepth(true);
+}
+
+void AonwardUsableActor::OnEndFocus()
+{
+	// Used by custom PostProcess to render outlines
+	MeshComp->SetRenderCustomDepth(false);
+}
+
+void AonwardUsableActor::OnUsed(APawn* InstigatorPawn)
+{
+	UE_LOG(HelloWorld, Log, TEXT("%s: %s is trying to use me!"), *(GetName()), *(InstigatorPawn->GetName()));
+}
