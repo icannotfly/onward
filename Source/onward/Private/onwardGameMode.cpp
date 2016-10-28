@@ -4,6 +4,7 @@
 #include "onwardCharacter.h"
 #include "onwardGameInstance.h"
 #include "onwardWorldSettings.h"
+#include "onwardPlayerController.h"
 #include "onwardHUD.h"
 #include "onwardGameMode.h"
 
@@ -12,8 +13,6 @@ AonwardGameMode::AonwardGameMode()
 	//hello world
 	UE_LOG(HelloWorld, Log, TEXT("GameMode online; hello, world."))
 
-
-
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/ThirdPersonCharacter"));
 	if (PlayerPawnBPClass.Class != NULL)
@@ -21,7 +20,8 @@ AonwardGameMode::AonwardGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 
-
+	//set the PlayerController class
+	PlayerControllerClass = AonwardPlayerController::StaticClass();
 
 	//Set the hud class to use our custom HUD by default.
 	this->HUDClass = AonwardHUD::StaticClass();
