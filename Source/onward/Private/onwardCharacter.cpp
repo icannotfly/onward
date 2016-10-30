@@ -474,7 +474,7 @@ class AonwardUsableActor* AonwardCharacter::GetUsableInView()
 	FRotator CameraRotation;
 
 	Controller->GetPlayerViewPoint(CameraLocation, CameraRotation);
-	const FVector TraceStart = CameraLocation;
+	const FVector TraceStart = GetMesh()->GetSocketLocation("eyes");
 	const FVector Direction = CameraRotation.Vector();
 	const FVector TraceEnd = TraceStart + (Direction * MaxUseDistance);
 
