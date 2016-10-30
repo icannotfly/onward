@@ -52,6 +52,27 @@ private:
 
 
 
+	//player health string
+	TAttribute<FText> PlayerHealthString;
+	FText GetPlayerHealthString() const;
+
+	//player health percentage
+	TAttribute<float> PlayerHealthPercentage;
+	TOptional<float> GetPlayerHealthPercentage() const;
+
+
+
+	//player movement status (running, jumping, whatever)
+	TAttribute<FText> PlayerMovementStatusString;
+	FText GetPlayerMovementStatusString() const;
+
+	//player movement velocity
+	TAttribute<float> PlayerMovementVelocity;
+	TOptional<float> GetPlayerMovementVelocityXY() const; //note that this only returns XY velocity, we don't care about jumping
+	TOptional<float> GetPlayerMovementVelocityXYPercentage() const;
+
+
+
 	/**
 	* A reference to the Slate Style used for this HUD's widgets.
 	**/

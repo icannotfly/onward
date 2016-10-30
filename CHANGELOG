@@ -27,3 +27,19 @@ changelog
 ###2016-08
 - 15: updated engine to 4.12.5.
 - 24: moved git's root folder, altered a bunch in .gitignore
+- 28: updated some depreciated function calls. worked a bit on replication. added player health in current/total fashion, and added a debugbar to display it.
+- 30: worked a little on characters taking damage
+- 31: more work on damage-taking and death.
+
+###2016-09
+- 13: made health bar red and added a spacer to the debug bars. worked a bit more on multiplayer code.
+- 15: fixed up some depreciated AttachTo() calls. added basic sprinting code but it doesnt actually change the player's speed yet.
+- 26: moved eye position on character. lowered map killZ. added a movement speed debug bar.
+
+###2016-10
+- 13: fixed the Time command so that it actually works now. started working on some operators but they're not done yet.
+- 23: disabled precomputed lighting.
+- 24: added a bunch of FTimestamp operators, de-const'd some because the compiler was crying, and added a check to the TotalSeconds/Remainder initializer to check for a negative remainder. wrote some tests and fixed some errors they revealed.
+- 25: wrote some more tests, added *= and /= to FTimestamp.
+- 27: shuffled things around into private/public folders to get in the abstraction mood. added using and bound [e] to it. added basic usable class but it doesn't do shit yet. added a basic PlayerCameraManager (which required adding a PlayerController) which ended up being an awesome wayto fix the brief camera seizures that were occuring when looking straight down at the end of an idle animation cycle.
+- 29: added tom looman's bomb. added some ambient sound to the world. added a torch that lights up.
