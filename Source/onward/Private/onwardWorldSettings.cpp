@@ -55,5 +55,5 @@ void AonwardWorldSettings::CalcRealWorldToInGameTimeConversionFactor()
 {
 	RealWorldToInGameTimeConversionFactor = (GAME_HOURS_IN_DAY * GAME_MINUTES_IN_HOUR * GAME_SECONDS_IN_MINUTE) / (GetRealWorldMinutesPerInGameDay() * 60.0);
 			
-	UE_LOG(LogWorldTime, Log, TEXT("RW to IG time conversion factor is now %f"), RealWorldToInGameTimeConversionFactor);
+	UE_LOG(LogWorldTime, Log, TEXT("Real-World to In-Game time conversion factor is now %f"), RealWorldToInGameTimeConversionFactor);
 }
