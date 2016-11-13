@@ -42,4 +42,10 @@ changelog
 - 24: added a bunch of FTimestamp operators, de-const'd some because the compiler was crying, and added a check to the TotalSeconds/Remainder initializer to check for a negative remainder. wrote some tests and fixed some errors they revealed.
 - 25: wrote some more tests, added *= and /= to FTimestamp.
 - 27: shuffled things around into private/public folders to get in the abstraction mood. added using and bound [e] to it. added basic usable class but it doesn't do shit yet. added a basic PlayerCameraManager (which required adding a PlayerController) which ended up being an awesome wayto fix the brief camera seizures that were occuring when looking straight down at the end of an idle animation cycle.
-- 29: added tom looman's bomb. added some ambient sound to the world. added a torch that lights up.
+- 29: added tom looman's bomb. added some ambient sound to the world. added a torch that lights up. started working on pt 2 of tom looman's survival tutorial.
+
+###2016-11
+- 03: added weapon class and some enums to go with it
+- 04: more work on weapon
+- 13: scrapped weapon work, going to restart from the beginning.
+ 
