@@ -3,14 +3,26 @@
 #include "onward.h"
 #include "UnrealNetwork.h"
 #include "onwardGameInstance.h" //only temporary for testing to see if the world time actually is being replicated
-#include "onwardUsableActor.h"
-#include "onwardCharacter.h"
+#include "items/onwardUsableActor.h"
+#include "character/onwardCharacterMovementComponent.h"
+#include "character/onwardCharacter.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AonwardCharacter
 
-AonwardCharacter::AonwardCharacter()
+AonwardCharacter::AonwardCharacter(const class FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<UonwardCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+	UCharacterMovementComponent* MoveComp = GetCharacterMovement();
+	// Adjust jump to make it less floaty -- looman
+	MoveComp->GravityScale = 1.5f;
+	MoveComp->JumpZVelocity = 620;
+	MoveComp->bCanWalkOffLedgesWhenCrouching = true;
+	MoveComp->MaxWalkSpeedCrouched = 200;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -45,43 +57,45 @@ AonwardCharacter::AonwardCharacter()
 
 	MaxUseDistance = 800;
 	bHasNewFocus = true;
+
+	SprintingSpeedModifier = 1.5;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Input
 
-void AonwardCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponent)
+void AonwardCharacter::SetupPlayerInputComponent(class UInputComponent* iInputComponent)
 {
 	// Set up gameplay key bindings
-	check(InputComponent);
-	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	check(iInputComponent);
+	iInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	iInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
-	InputComponent->BindAxis("MoveForward", this, &AonwardCharacter::MoveForward);
-	InputComponent->BindAxis("MoveRight", this, &AonwardCharacter::MoveRight);
+	iInputComponent->BindAxis("MoveForward", this, &AonwardCharacter::MoveForward);
+	iInputComponent->BindAxis("MoveRight", this, &AonwardCharacter::MoveRight);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	InputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	InputComponent->BindAxis("TurnRate", this, &AonwardCharacter::TurnAtRate);
-	InputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	InputComponent->BindAxis("LookUpRate", this, &AonwardCharacter::LookUpAtRate);
+	iInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	iInputComponent->BindAxis("TurnRate", this, &AonwardCharacter::TurnAtRate);
+	iInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	iInputComponent->BindAxis("LookUpRate", this, &AonwardCharacter::LookUpAtRate);
 
 	// handle touch devices
-	InputComponent->BindTouch(IE_Pressed, this, &AonwardCharacter::TouchStarted);
-	InputComponent->BindTouch(IE_Released, this, &AonwardCharacter::TouchStopped);
+	iInputComponent->BindTouch(IE_Pressed, this, &AonwardCharacter::TouchStarted);
+	iInputComponent->BindTouch(IE_Released, this, &AonwardCharacter::TouchStopped);
 
 	//camera movement
-	InputComponent->BindAction("CameraMoveIn", IE_Pressed, this, &AonwardCharacter::Input_ScrollUp);
-	InputComponent->BindAction("CameraMoveOut", IE_Pressed, this, &AonwardCharacter::Input_ScrollDown);
+	iInputComponent->BindAction("CameraMoveIn", IE_Pressed, this, &AonwardCharacter::Input_ScrollUp);
+	iInputComponent->BindAction("CameraMoveOut", IE_Pressed, this, &AonwardCharacter::Input_ScrollDown);
 
 	//movement - sprint
-	InputComponent->BindAction("Sprint", IE_Pressed, this, &AonwardCharacter::RequestStartSprinting);
-	InputComponent->BindAction("Sprint", IE_Released, this, &AonwardCharacter::RequestStopSprinting);
+	iInputComponent->BindAction("Sprint", IE_Pressed, this, &AonwardCharacter::RequestStartSprinting);
+	iInputComponent->BindAction("Sprint", IE_Released, this, &AonwardCharacter::RequestStopSprinting);
 
 	//interaction - use
-	InputComponent->BindAction("Use", IE_Pressed, this, &AonwardCharacter::Use);
+	iInputComponent->BindAction("Use", IE_Pressed, this, &AonwardCharacter::Use);
 }
 
 

@@ -19,7 +19,7 @@ class AonwardCharacter : public ACharacter
 
 
 public:
-	AonwardCharacter();
+	AonwardCharacter(const class FObjectInitializer& ObjectInitializer);
 
 	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
 
