@@ -48,4 +48,7 @@ changelog
 - 03: added weapon class and some enums to go with it
 - 04: more work on weapon
 - 13: scrapped weapon work, going to restart from the beginning.
+
+###2016-12
+- 18: did a little reorganization to clean things up. added CharacterMovementComponent to handle sprinting which is implemented now. spent about two hours trying to figure out why the project wasn't building (changes didn't show up in the compiled game) and eventually got it working, but never figured out what had gone wrong.
  
