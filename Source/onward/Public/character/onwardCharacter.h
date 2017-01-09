@@ -60,6 +60,18 @@ public:
 	//returns our total health
 	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetHealthTotal() const;
 
+	//returns our current stamina
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetStaminaCurrent() const;
+
+	//returns our total stamina
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetStaminaTotal() const;
+
+	//returns our current mana
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetManaCurrent() const;
+
+	//returns our total mana
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetManaTotal() const;
+
 	//override
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
 
@@ -168,6 +180,18 @@ private:
 
 	//total health
 	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float HealthTotal = 100.0;
+
+	//current stamina
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float StaminaCurrent = 100.0;
+
+	//total stamina
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float StaminaTotal = 100.0;
+
+	//current mana
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float ManaCurrent = 100.0;
+
+	//total mana
+	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float ManaTotal = 100.0;
 
 	//are we alive?
 	bool bIsAlive = false;

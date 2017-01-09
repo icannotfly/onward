@@ -348,6 +348,26 @@ float AonwardCharacter::GetHealthTotal() const
 	return HealthTotal;
 }
 
+float AonwardCharacter::GetStaminaCurrent() const
+{
+	return StaminaCurrent;
+}
+
+float AonwardCharacter::GetStaminaTotal() const
+{
+	return StaminaTotal;
+}
+
+float AonwardCharacter::GetManaCurrent() const
+{
+	return ManaCurrent;
+}
+
+float AonwardCharacter::GetManaTotal() const
+{
+	return ManaTotal;
+}
+
 float AonwardCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
