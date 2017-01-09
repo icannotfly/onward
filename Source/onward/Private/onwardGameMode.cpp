@@ -102,21 +102,17 @@ void AonwardGameMode::Time(FString iTime)
 		if (WorldTime == nullptr)
 		{
 			//log error
+			UE_LOG(LogWorldTime, Error, TEXT("%s::%s() %s : unable to get WorldTime"), *(CURR_CLASS), *(CURR_FUNCTION), *(CURR_LINE));
 			return;
 		}
 
-		FTimestamp TargetTime;
+		FTimestamp TargetTime = FTimestamp(WorldTime->GetYear(), WorldTime->GetMonth(), WorldTime->GetDay(), TargetHour, 0, 0);
 
-		//compare current time with target time
-		if (WorldTime->GetHour() > TargetHour)
+		//check to see if target time is in the past
+		if (WorldTime->GetTotalSeconds() >= TargetTime.GetTotalSeconds())
 		{
-			//if current time is past the target time, we need to advance to the next day
-			TargetTime = FTimestamp(WorldTime->GetYear(), WorldTime->GetMonth(), WorldTime->GetDay() + 1, TargetHour, 0, 0);
-		}
-		else
-		{
-			//if not, just set the hour
-			TargetTime = FTimestamp(WorldTime->GetYear(), WorldTime->GetMonth(), WorldTime->GetDay(), TargetHour, 0, 0);
+			//if so, we need to forward time to sometime tomorrow, not today
+			TargetTime.AddTime(0, 0, 1, 0, 0, 0);
 		}
 
 		ForwardTimeTo(TargetTime);
