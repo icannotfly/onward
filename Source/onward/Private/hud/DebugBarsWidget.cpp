@@ -18,6 +18,8 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 	WorldSeason.Bind(this, &SDebugBarsWidget::GetWorldSeason);
 
 	PlayerHealthString.Bind(this, &SDebugBarsWidget::GetPlayerHealthString);
+	PlayerStaminaString.Bind(this, &SDebugBarsWidget::GetPlayerStaminaString);
+	PlayerManaString.Bind(this, &SDebugBarsWidget::GetPlayerManaString);
 	
 	PlayerMovementStatusString.Bind(this, &SDebugBarsWidget::GetPlayerMovementStatusString);
 	//PlayerMovementVelocity.Bind(this, &SDebugBarsWidget::GetPlayerMovementVelocity);
@@ -103,6 +105,46 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 				[
 					SNew(STextBlock)
 					.Text(PlayerHealthString)
+					.ShadowColorAndOpacity(FLinearColor::Black)
+					.ShadowOffset(FIntPoint(1, 1))
+				]
+			]
+
+			// player stamina
+			+ SVerticalBox::Slot().Padding(PADDING_OUTER)
+			[
+				SNew(SOverlay)
+				+ SOverlay::Slot()
+				[
+					SNew(SProgressBar)
+					.Percent(this, &SDebugBarsWidget::GetPlayerStaminaPercentage)
+					.FillColorAndOpacity(FSlateColor::FSlateColor(FLinearColor::Green))
+				]
+				+ SOverlay::Slot()
+				.Padding(PADDING)
+				[
+					SNew(STextBlock)
+					.Text(PlayerStaminaString)
+					.ShadowColorAndOpacity(FLinearColor::Black)
+					.ShadowOffset(FIntPoint(1, 1))
+				]
+			]
+
+			// player mana
+			+ SVerticalBox::Slot().Padding(PADDING_OUTER)
+			[
+				SNew(SOverlay)
+				+ SOverlay::Slot()
+				[
+					SNew(SProgressBar)
+					.Percent(this, &SDebugBarsWidget::GetPlayerManaPercentage)
+					.FillColorAndOpacity(FSlateColor::FSlateColor(FLinearColor::Blue))
+				]
+				+ SOverlay::Slot()
+				.Padding(PADDING)
+				[
+					SNew(STextBlock)
+					.Text(PlayerManaString)
 					.ShadowColorAndOpacity(FLinearColor::Black)
 					.ShadowOffset(FIntPoint(1, 1))
 				]
@@ -231,8 +273,6 @@ FText SDebugBarsWidget::GetPlayerHealthString() const
 	return FText::FromString("    /    ");
 }
 
-
-
 TOptional<float> SDebugBarsWidget::GetPlayerHealthPercentage() const
 {
 	UonwardGameInstance* GI = Cast<UonwardGameInstance>(OwnerHUD->GetGameInstance());
@@ -245,6 +285,112 @@ TOptional<float> SDebugBarsWidget::GetPlayerHealthPercentage() const
 			if (C)
 			{
 				return C->GetHealthCurrent() / C->GetHealthTotal();
+			}
+		}
+	}
+	return 0.5;
+}
+
+
+
+FText SDebugBarsWidget::GetPlayerStaminaString() const
+{
+	UonwardGameInstance* GI = Cast<UonwardGameInstance>(OwnerHUD->GetGameInstance());
+	if (GI)
+	{
+		FString Ret = " ";
+
+		APlayerController* PC = OwnerHUD->PlayerOwner;
+		if (PC)
+		{
+			AonwardCharacter *C = Cast<AonwardCharacter>(PC->GetPawn());
+			if (C)
+			{
+				Ret = "SP: ";
+				Ret += FString::SanitizeFloat(C->GetStaminaCurrent());
+				Ret += " / ";
+				Ret += FString::SanitizeFloat(C->GetStaminaTotal());
+			}
+			else
+			{
+				Ret = "NO PAWN";
+			}
+		}
+		else
+		{
+			Ret = "NO OWNER";
+		}
+
+		return FText::FromString(Ret);
+	}
+	return FText::FromString("    /    ");
+}
+
+TOptional<float> SDebugBarsWidget::GetPlayerStaminaPercentage() const
+{
+	UonwardGameInstance* GI = Cast<UonwardGameInstance>(OwnerHUD->GetGameInstance());
+	if (GI)
+	{
+		APlayerController* PC = OwnerHUD->PlayerOwner;
+		if (PC)
+		{
+			AonwardCharacter *C = Cast<AonwardCharacter>(PC->GetPawn());
+			if (C)
+			{
+				return C->GetStaminaCurrent() / C->GetStaminaTotal();
+			}
+		}
+	}
+	return 0.5;
+}
+
+
+
+FText SDebugBarsWidget::GetPlayerManaString() const
+{
+	UonwardGameInstance* GI = Cast<UonwardGameInstance>(OwnerHUD->GetGameInstance());
+	if (GI)
+	{
+		FString Ret = " ";
+
+		APlayerController* PC = OwnerHUD->PlayerOwner;
+		if (PC)
+		{
+			AonwardCharacter *C = Cast<AonwardCharacter>(PC->GetPawn());
+			if (C)
+			{
+				Ret = "MP: ";
+				Ret += FString::SanitizeFloat(C->GetManaCurrent());
+				Ret += " / ";
+				Ret += FString::SanitizeFloat(C->GetManaTotal());
+			}
+			else
+			{
+				Ret = "NO PAWN";
+			}
+		}
+		else
+		{
+			Ret = "NO OWNER";
+		}
+
+		return FText::FromString(Ret);
+	}
+	return FText::FromString("    /    ");
+}
+
+TOptional<float> SDebugBarsWidget::GetPlayerManaPercentage() const
+{
+	UonwardGameInstance* GI = Cast<UonwardGameInstance>(OwnerHUD->GetGameInstance());
+	if (GI)
+	{
+		APlayerController* PC = OwnerHUD->PlayerOwner;
+		if (PC)
+		{
+			AonwardCharacter *C = Cast<AonwardCharacter>(PC->GetPawn());
+			if (C)
+			{
+				return C->GetManaCurrent() / C->GetManaTotal();
 			}
 		}
 	}

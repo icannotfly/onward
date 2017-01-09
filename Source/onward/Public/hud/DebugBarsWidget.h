@@ -62,6 +62,26 @@ private:
 
 
 
+	//player stamina string
+	TAttribute<FText> PlayerStaminaString;
+	FText GetPlayerStaminaString() const;
+
+	//player stamina percentage
+	TAttribute<float> PlayerStaminaPercentage;
+	TOptional<float> GetPlayerStaminaPercentage() const;
+
+
+
+	//player mana string
+	TAttribute<FText> PlayerManaString;
+	FText GetPlayerManaString() const;
+
+	//player mana percentage
+	TAttribute<float> PlayerManaPercentage;
+	TOptional<float> GetPlayerManaPercentage() const;
+
+
+
 	//player movement status (running, jumping, whatever)
 	TAttribute<FText> PlayerMovementStatusString;
 	FText GetPlayerMovementStatusString() const;
