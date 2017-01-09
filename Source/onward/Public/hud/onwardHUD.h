@@ -26,4 +26,7 @@ public:
 	TSharedPtr<SDebugBarsWidget> DebugBars;
 
 	void BeginPlay();
+
+	//called once per frame to do the actual hud drawing
+	virtual void DrawHUD() override;
 };
