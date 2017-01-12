@@ -11,12 +11,17 @@ float UonwardCharacterMovementComponent::GetMaxSpeed() const
 	float MaxSpeed = Super::GetMaxSpeed();
 
 	const AonwardCharacter* CharOwner = Cast<AonwardCharacter>(PawnOwner);
-	if (CharacterOwner)
+	if (CharOwner)
 	{
 		if (CharOwner->IsSprinting())
 		{
 			MaxSpeed *= CharOwner->GetSprintingSpeedModifier();
 		}
+		else if (CharOwner->IsWalking())
+		{
+			MaxSpeed *= CharOwner->GetWalkingSpeedModifier();
+		}
+
 		//TODO crouching speed modifier goes here
 		/*else if (CharacterOwner->IsCrouching())
 		{

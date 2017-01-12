@@ -59,6 +59,7 @@ AonwardCharacter::AonwardCharacter(const class FObjectInitializer& ObjectInitial
 	bHasNewFocus = true;
 
 	SprintingSpeedModifier = 1.5;
+	WalkingSpeedModifier = 0.4;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -93,6 +94,10 @@ void AonwardCharacter::SetupPlayerInputComponent(class UInputComponent* iInputCo
 	//movement - sprint
 	iInputComponent->BindAction("Sprint", IE_Pressed, this, &AonwardCharacter::RequestStartSprinting);
 	iInputComponent->BindAction("Sprint", IE_Released, this, &AonwardCharacter::RequestStopSprinting);
+
+	//movement - walk
+	iInputComponent->BindAction("Walk", IE_Pressed, this, &AonwardCharacter::RequestStartWalking);
+	iInputComponent->BindAction("Walk", IE_Released, this, &AonwardCharacter::RequestStopWalking);
 
 	//interaction - use
 	iInputComponent->BindAction("Use", IE_Pressed, this, &AonwardCharacter::Use);
@@ -134,6 +139,12 @@ void AonwardCharacter::Tick(float DeltaSeconds)
 	if (bWantsToSprint && !IsSprinting())
 	{
 		SetSprinting(true);
+	}
+
+	//walking
+	if (bWantsToWalk && !IsWalking())
+	{
+		SetWalking(true);
 	}
 
 	//debug
@@ -279,6 +290,8 @@ void AonwardCharacter::Input_ScrollDown()
 	}
 }
 
+
+
 void AonwardCharacter::RequestStartSprinting()
 {
 	SetSprinting(true);
@@ -297,7 +310,7 @@ void AonwardCharacter::SetSprinting(bool bNewSprinting)
 	//stop in-progress actions
 
 	FString in = bWantsToSprint ? "true" : "false";
-	UE_LOG(LogPlayerMovement, Warning, TEXT("input is %s "), *(in));
+	UE_LOG(LogPlayerMovement, Warning, TEXT("(SPRINT) input is %s "), *(in));
 
 	if (Role < ROLE_Authority)
 	{
@@ -307,7 +320,6 @@ void AonwardCharacter::SetSprinting(bool bNewSprinting)
 
 void AonwardCharacter::Server_SetSprinting_Implementation(bool bNewSprinting)
 {
-	UE_LOG(HelloWorld, Warning, TEXT("wtwetwetwe"));
 	SetSprinting(bNewSprinting);
 
 	if (bNewSprinting)
@@ -334,6 +346,64 @@ bool AonwardCharacter::IsSprinting() const
 	}
 
 	return bWantsToSprint;		//TODO and other conditions, check looman's code line 366
+}
+
+
+
+void AonwardCharacter::RequestStartWalking()
+{
+	SetWalking(true);
+}
+
+void AonwardCharacter::RequestStopWalking()
+{
+	SetWalking(false);
+}
+
+void AonwardCharacter::SetWalking(bool bNewWalking)
+{
+	bWantsToWalk = bNewWalking;
+
+	//un-prone, un-crouch, all that stuff
+	//stop in-progress actions
+
+	FString in = bWantsToWalk ? "true" : "false";
+	UE_LOG(LogPlayerMovement, Warning, TEXT("(WALK) input is %s "), *(in));
+
+	if (Role < ROLE_Authority)
+	{
+		Server_SetWalking(bNewWalking);
+	}
+}
+
+void AonwardCharacter::Server_SetWalking_Implementation(bool bNewWalking)
+{
+	SetWalking(bNewWalking);
+
+	if (bNewWalking)
+	{
+		UE_LOG(LogPlayerMovement, Log, TEXT("%s starting to walk"), *(GetName()));
+	}
+	else
+	{
+		UE_LOG(LogPlayerMovement, Log, TEXT("%s stopping walking"), *(GetName()));
+	}
+}
+
+bool AonwardCharacter::Server_SetWalking_Validate(bool bNewWalking)
+{
+	//TODO check to see if we have enough energy to start walking, which means //TODO implement energy
+	return true;		//is this where we should check to see if we have enough energy?
+}
+
+bool AonwardCharacter::IsWalking() const
+{
+	if (!GetCharacterMovement())
+	{
+		return false;
+	}
+
+	return bWantsToWalk;		//TODO and other conditions, check looman's code line 366
 }
 
 
@@ -454,6 +524,11 @@ bool AonwardCharacter::MyServerFunction_Validate()
 float AonwardCharacter::GetSprintingSpeedModifier() const
 {
 	return SprintingSpeedModifier;
+}
+
+float AonwardCharacter::GetWalkingSpeedModifier() const
+{
+	return WalkingSpeedModifier;
 }
 
 

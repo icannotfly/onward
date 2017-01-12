@@ -54,6 +54,9 @@ public:
 	//are we currently sprinting?
 	UFUNCTION(BlueprintCallable, Category = "Movement") bool IsSprinting() const;
 
+	//are we currently walking? //TODO might want to replace these two with an enum that describes our movement state, or expand an existing enum
+	UFUNCTION(BlueprintCallable, Category = "Movement") bool IsWalking() const;
+
 	//returns our current health
 	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetHealthCurrent() const;
 
@@ -85,6 +88,9 @@ public:
 
 	//returns the sprinting speed modifier
 	float GetSprintingSpeedModifier() const;
+
+	//returns the walking speed modifier
+	float GetWalkingSpeedModifier() const;
 
 
 
@@ -165,8 +171,8 @@ private:
 	//set sprinting, either start or stop depending on bNewSprinting
 	void SetSprinting(bool bNewSprinting);
 
-	//
-	UPROPERTY(EditDefaultsOnly, Category = "ObjectInteraction") float SprintingSpeedModifier;
+	//sprinting movement speed = base movement speed * SprintingSpeedModifier;
+	UPROPERTY(EditDefaultsOnly, Category = "Movement") float SprintingSpeedModifier;
 
 	//like SetSprinting(), but done on the server
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -174,6 +180,29 @@ private:
 
 	//has our controller or human requested a sprint?
 	bool bWantsToSprint = false;
+
+
+
+	//called when walk key is pressed, asks pawn to start walking - note that the pawn can deny our request based on lack of energy or some terrain consideration or something
+	void RequestStartWalking();
+
+	//called when walk key is released, asks pawn to stop walking
+	void RequestStopWalking();
+
+	//set walking, either start or stop (depending on bNewWalking)
+	void SetWalking(bool bNewWalking);
+
+	//walking movement speed = base movement speed * WalkingSpeedModifier;
+	UPROPERTY(EditDefaultsOnly, Category = "Movement") float WalkingSpeedModifier;
+
+	//SetWalkinging() thats done on the server
+	UFUNCTION(Server, Reliable, WithValidation)
+		void Server_SetWalking(bool bNewWalking);
+
+	//has our controller or human requested to walk?
+	bool bWantsToWalk = false;
+
+
 
 	//current health
 	UPROPERTY(EditDefaultsOnly, Category = "PlayerVitals", Replicated) float HealthCurrent = 100.0;
