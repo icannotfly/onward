@@ -412,7 +412,8 @@ FText SDebugBarsWidget::GetPlayerMovementStatusString() const
 			AonwardCharacter *C = Cast<AonwardCharacter>(PC->GetPawn());
 			if (C)
 			{
-				ret.AppendInt(GetPlayerMovementVelocityXY().Get(0));
+				int CurrentMovementSpeed = FMath::RoundToInt(GetPlayerMovementVelocityXY().Get(0));
+				ret.AppendInt(CurrentMovementSpeed);
 			}
 		}
 	}
