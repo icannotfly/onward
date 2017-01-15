@@ -6,7 +6,7 @@
 #define LOCTEXT_NAMESPACE "SDebugBarsWidget"
 #define PADDING_OUTER 8,2
 #define PADDING 6,4 // horiz, vert
-#define MAX_MOVEMENT_SPEED 800.0
+#define MAX_MOVEMENT_SPEED 900.0
 
 void SDebugBarsWidget::Construct(const FArguments& InArgs)
 {
