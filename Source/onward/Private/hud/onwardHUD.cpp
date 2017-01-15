@@ -49,3 +49,19 @@ void AonwardHUD::ToggleCrosshair()
 {
 	bShowCrosshair = !bShowCrosshair;
 }
+
+void AonwardHUD::ToggleDebugBars()
+{
+	if (DebugBars->GetVisibility() == EVisibility::Visible)
+	{
+		DebugBars->SetVisibility(EVisibility::Collapsed);
+	}
+	else if (DebugBars->GetVisibility() == EVisibility::Collapsed)
+	{
+		DebugBars->SetVisibility(EVisibility::Visible);
+	}
+	else
+	{
+		UE_LOG(LogExec, Error, TEXT("%s debug bars have unexpected visibility state"), *(CURR_FUNC_CALL));
+	}
+}

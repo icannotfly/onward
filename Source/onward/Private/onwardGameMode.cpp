@@ -267,6 +267,13 @@ void AonwardGameMode::ToggleCrosshair()
 
 
 
+void AonwardGameMode::ToggleDebugBars()
+{
+	Cast<AonwardHUD>(GetWorld()->GetFirstPlayerController()->GetHUD())->ToggleDebugBars();
+}
+
+
+
 
 void AonwardGameMode::DoTests()
 {

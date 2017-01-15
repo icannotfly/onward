@@ -54,6 +54,9 @@ public:
 	//toggle visiblity of the crosshair
 	UFUNCTION(exec) void ToggleCrosshair();
 
+	//toggle visibilty of the debug bars
+	UFUNCTION(exec) void ToggleDebugBars();
+
 	//do some tests; exact nature depends on the tests contained in this function at the time of compilation
 	UFUNCTION(exec) void DoTests();
 };

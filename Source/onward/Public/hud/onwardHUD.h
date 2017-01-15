@@ -33,6 +33,9 @@ public:
 	//toggle visibilty of the crosshair
 	UFUNCTION() void ToggleCrosshair();
 
+	//toggle visibilty of the debug bars
+	UFUNCTION() void ToggleDebugBars();
+
 
 
 private:
