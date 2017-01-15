@@ -51,4 +51,9 @@ changelog
 
 ###2016-12
 - 18: did a little reorganization to clean things up. added CharacterMovementComponent to handle sprinting which is implemented now. spent about two hours trying to figure out why the project wasn't building (changes didn't show up in the compiled game) and eventually got it working, but never figured out what had gone wrong.
+
+###2017-01
+- 08: fixed `time <string>` so that it correctly forwards to the next day if you enter a text value that's before today's current time. added a simple crosshair. added stamina and mana to both Acharacter and the hud, but they don't do anything yet.
+- 11: added walking; currently bound to left alt.
+- 14: added a few functions for dealing with stamina and mana. added a log category for actions involving character vitals. added commands to toggle visiblity of the debug bars and of the crosshair. added some more function call defines for logging.
  
