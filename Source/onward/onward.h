@@ -40,7 +40,7 @@
 #define CURR_FUNC_SIG (FString(__FUNCSIG__))
 
 //everything mushed into one - looks like    void __cdecl AonwardGameMode::DoTests(void) @ 439
-#define CURR_FUNC_CALL (CURR_FUNC_SIG + " @ " + CURR_LINE)
+#define CURR_FUNC_CALL (CURR_FUNC_SIG + " @" + CURR_LINE + ":")
 
 
 
