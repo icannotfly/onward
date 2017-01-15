@@ -507,6 +507,51 @@ void AonwardCharacter::HandleDeath()
 
 
 
+void AonwardCharacter::ChangeStamina(float iChangeAmount)
+{
+	StaminaCurrent += iChangeAmount;
+
+	//check for overrun
+	if (StaminaCurrent > StaminaTotal)
+	{
+		StaminaCurrent = StaminaTotal;
+	}
+	//check for underrun
+	else if (StaminaCurrent < 0.0)
+	{
+		StaminaCurrent = 0.0;
+		UE_LOG(LogCharacterVitals, Warning, TEXT(""));
+	}
+}
+
+
+
+void AonwardCharacter::ChangeMana(float iChangeAmount)
+{
+	ManaCurrent += iChangeAmount;
+
+	//check for overrun
+	if (ManaCurrent > ManaTotal)
+	{
+		ManaCurrent = ManaTotal;
+	}
+	//check for underrun
+	else if (ManaCurrent < 0.0)
+	{
+		//remove the underrun amount from stamina instead (too much thinking makes you pass out)
+		ChangeStamina(
+			ManaCurrent * 0.667 //mana-to-stamina conversion factor (TODO)
+		);
+
+		//clamp to 0
+		ManaCurrent = 0.0;
+
+		UE_LOG(LogCharacterVitals, Warning, TEXT(""));
+	}
+}
+
+
+
 void AonwardCharacter::MyServerFunction_Implementation()
 {
 	GEngine->AddOnScreenDebugMessage(-1, -1, FColor::White, TEXT("hello there - called on client and executed on server."));

@@ -157,6 +157,18 @@ protected:
 
 
 
+	//==========================
+	// vitals
+	//==========================
+
+	//alters the amount of stamina this character currently has - does not modify total amount
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") void ChangeStamina(float iChangeAmount);
+
+	//alters the amount of mana this character currently has - does not modify total amount
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") void ChangeMana(float iChangeAmount);
+
+
+
 private:
 
 	//is camera in firstperson mode?
