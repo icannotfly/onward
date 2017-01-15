@@ -29,4 +29,14 @@ public:
 
 	//called once per frame to do the actual hud drawing
 	virtual void DrawHUD() override;
+
+	//toggle visibilty of the crosshair
+	UFUNCTION() void ToggleCrosshair();
+
+
+
+private:
+
+	//should we show the crosshair?
+	bool bShowCrosshair = true;
 };

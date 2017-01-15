@@ -39,6 +39,21 @@ public:
 	//remove the specified amout of heath from the player - can kill
 	UFUNCTION(exec) void RemoveHealth(float HealthAmount);
 
+	//add the specified amount of stamina to the player
+	UFUNCTION(exec) void AddStamina(float StaminaAmount);
+
+	//remove the specified amout of stamina from the player
+	UFUNCTION(exec) void RemoveStamina(float StaminaAmount);
+
+	//add the specified amount of mana to the player
+	UFUNCTION(exec) void AddMana(float ManaAmount);
+
+	//remove the specified amout of mana from the player
+	UFUNCTION(exec) void RemoveMana(float ManaAmount);
+
+	//toggle visiblity of the crosshair
+	UFUNCTION(exec) void ToggleCrosshair();
+
 	//do some tests; exact nature depends on the tests contained in this function at the time of compilation
 	UFUNCTION(exec) void DoTests();
 };

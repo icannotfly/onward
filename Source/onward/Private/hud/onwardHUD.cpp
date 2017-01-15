@@ -33,11 +33,19 @@ void AonwardHUD::DrawHUD()
 	const FVector2D ViewportSize = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
 
 	//draw a simple crosshair
-	DrawRect(
-		FLinearColor(1.0, 1.0, 1.0, 0.25),
-		FMath::RoundToFloat(ViewportSize.X / 2.0) - 1,
-		FMath::RoundToFloat(ViewportSize.Y / 2.0) - 1,
-		2.0,
-		2.0
-	);
+	if(bShowCrosshair)
+	{
+		DrawRect(
+			FLinearColor(1.0, 1.0, 1.0, 0.25),
+			FMath::RoundToFloat(ViewportSize.X / 2.0) - 1,
+			FMath::RoundToFloat(ViewportSize.Y / 2.0) - 1,
+			2.0,
+			2.0
+		);
+	}
+}
+
+void AonwardHUD::ToggleCrosshair()
+{
+	bShowCrosshair = !bShowCrosshair;
 }
