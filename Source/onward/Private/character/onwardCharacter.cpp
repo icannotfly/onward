@@ -310,7 +310,7 @@ void AonwardCharacter::SetSprinting(bool bNewSprinting)
 	//stop in-progress actions
 
 	FString in = bWantsToSprint ? "true" : "false";
-	UE_LOG(LogPlayerMovement, Warning, TEXT("(SPRINT) input is %s "), *(in));
+	UE_LOG(LogCharacterMovement, Warning, TEXT("(SPRINT) input is %s "), *(in));
 
 	if (Role < ROLE_Authority)
 	{
@@ -324,11 +324,11 @@ void AonwardCharacter::Server_SetSprinting_Implementation(bool bNewSprinting)
 
 	if (bNewSprinting)
 	{
-		UE_LOG(LogPlayerMovement, Log, TEXT("%s starting to sprint"), *(GetName()));
+		UE_LOG(LogCharacterMovement, Log, TEXT("%s starting to sprint"), *(GetName()));
 	}
 	else
 	{
-		UE_LOG(LogPlayerMovement, Log, TEXT("%s stopping sprinting"), *(GetName()));
+		UE_LOG(LogCharacterMovement, Log, TEXT("%s stopping sprinting"), *(GetName()));
 	}
 }
 
@@ -368,7 +368,7 @@ void AonwardCharacter::SetWalking(bool bNewWalking)
 	//stop in-progress actions
 
 	FString in = bWantsToWalk ? "true" : "false";
-	UE_LOG(LogPlayerMovement, Warning, TEXT("(WALK) input is %s "), *(in));
+	UE_LOG(LogCharacterMovement, Warning, TEXT("(WALK) input is %s "), *(in));
 
 	if (Role < ROLE_Authority)
 	{
@@ -382,11 +382,11 @@ void AonwardCharacter::Server_SetWalking_Implementation(bool bNewWalking)
 
 	if (bNewWalking)
 	{
-		UE_LOG(LogPlayerMovement, Log, TEXT("%s starting to walk"), *(GetName()));
+		UE_LOG(LogCharacterMovement, Log, TEXT("%s starting to walk"), *(GetName()));
 	}
 	else
 	{
-		UE_LOG(LogPlayerMovement, Log, TEXT("%s stopping walking"), *(GetName()));
+		UE_LOG(LogCharacterMovement, Log, TEXT("%s stopping walking"), *(GetName()));
 	}
 }
 

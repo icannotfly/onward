@@ -47,7 +47,7 @@
 DECLARE_LOG_CATEGORY_EXTERN(HelloWorld, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogWorldTime, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogCombat, Log, All);
-DECLARE_LOG_CATEGORY_EXTERN(LogPlayerMovement, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogCharacterMovement, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogCharacterVitals, Log, All);
 
 #endif
