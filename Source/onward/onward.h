@@ -25,10 +25,22 @@
 
 //thanks, rama!
 //use like:
-// UE_LOG(HelloWorld, Log, TEXT("%s::%s() at line (%s): error message"), *(CURR_CLASS), *(CURR_FUNCTION), *(CURR_LINE));
-#define CURR_CLASS FString(__FUNCTION__).Left(FString(__FUNCTION__).Find(TEXT(":"))) //will print current class
-#define CURR_FUNCTION FString(__FUNCTION__).Right(FString(__FUNCTION__).Len() - FString(__FUNCTION__).Find(TEXT("::")) - 2 ) //will print current function
+//    UE_LOG(HelloWorld, Log, TEXT("%s::%s() at line (%s): error message"), *(CURR_CLASS), *(CURR_FUNCTION), *(CURR_LINE));
+
+//current class - looks like    AonwardGameMode
+#define CURR_CLASS FString(__FUNCTION__).Left(FString(__FUNCTION__).Find(TEXT(":")))
+
+//current function - looks like    DoTests
+#define CURR_FUNCTION FString(__FUNCTION__).Right(FString(__FUNCTION__).Len() - FString(__FUNCTION__).Find(TEXT("::")) - 2 )
+
+//current line number - looks like    437
 #define CURR_LINE FString::FromInt(__LINE__)
+
+//signature of current function - looks like    void __cdecl AonwardGameMode::DoTests(void)
+#define CURR_FUNC_SIG (FString(__FUNCSIG__))
+
+//everything mushed into one - looks like    void __cdecl AonwardGameMode::DoTests(void) @ 439
+#define CURR_FUNC_CALL (CURR_FUNC_SIG + " @ " + CURR_LINE)
 
 
 
