@@ -224,42 +224,6 @@ void AonwardGameMode::ForwardTimeTo(FTimestamp iTargetTime)
 
 
 
-void AonwardGameMode::AddHealth(float HealthAmount)
-{
-	Cast<AonwardCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->TakeDamage((HealthAmount * -1.0), FDamageEvent::FDamageEvent(), nullptr, this);
-}
-
-void AonwardGameMode::RemoveHealth(float HealthAmount)
-{
-	Cast<AonwardCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn())->TakeDamage(HealthAmount, FDamageEvent::FDamageEvent(), nullptr, this);
-}
-
-
-
-void AonwardGameMode::AddStamina(float StaminaAmount)
-{
-	
-}
-
-void AonwardGameMode::RemoveStamina(float StaminaAmount)
-{
-	
-}
-
-
-
-void AonwardGameMode::AddMana(float ManaAmount)
-{
-	
-}
-
-void AonwardGameMode::RemoveMana(float ManaAmount)
-{
-	
-}
-
-
-
 void AonwardGameMode::ToggleCrosshair()
 {
 	Cast<AonwardHUD>(GetWorld()->GetFirstPlayerController()->GetHUD())->ToggleCrosshair();
