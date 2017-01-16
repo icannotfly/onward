@@ -87,6 +87,9 @@ public:
 	//alters the amount of mana this character currently has - does not modify total amount
 	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") void ChangeMana(float iChangeAmount);
 
+	//server version of ChangeStamina
+	UFUNCTION(Server, Reliable, WithValidation) void Server_ChangeMana(float iChangeAmount);
+
 	//override
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
 

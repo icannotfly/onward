@@ -546,15 +546,14 @@ void AonwardCharacter::ChangeStamina(float iChangeAmount, bool bAllowPassingOut)
 	{
 		Server_ChangeStamina(iChangeAmount);
 	}
+
+	UE_LOG(LogCharacterVitals, Log, TEXT("%s stamina is now %f/%f"), *(CURR_FUNC_CALL), (GetStaminaCurrent()), (GetStaminaTotal()));
 }
 
 void AonwardCharacter::Server_ChangeStamina_Implementation(float iChangeAmount, bool bAllowPassingOut)
 {
-	UE_LOG(LogCharacterVitals, Log, TEXT("%s "), *(CURR_FUNC_CALL));
+	UE_LOG(LogCharacterVitals, Log, TEXT("%s server call for %s"), *(CURR_FUNC_CALL), *(GetName()));
 	ChangeStamina(iChangeAmount, bAllowPassingOut);
-	
-		//
-	UE_LOG(HelloWorld, Warning, TEXT("SERVER PORTION"));
 }
 
 bool AonwardCharacter::Server_ChangeStamina_Validate(float iChangeAmount, bool bAllowPassingOut)
@@ -574,6 +573,8 @@ bool AonwardCharacter::Server_ChangeStamina_Validate(float iChangeAmount, bool b
 
 void AonwardCharacter::ChangeMana(float iChangeAmount)
 {
+	UE_LOG(LogCharacterVitals, Log, TEXT("%s attempting to change %s's mana by %f"), *(CURR_FUNC_CALL), *(GetName()), (iChangeAmount));
+
 	ManaCurrent += iChangeAmount;
 
 	//check for overrun
@@ -585,15 +586,40 @@ void AonwardCharacter::ChangeMana(float iChangeAmount)
 	else if (ManaCurrent < 0.0)
 	{
 		//remove the underrun amount from stamina instead (too much thinking makes you pass out)
+		UE_LOG(LogCharacterVitals, Warning, TEXT("%s %s ran out of mana! will now eat into stamina."), *(CURR_FUNC_CALL), *(GetName()));
 		ChangeStamina(
 			ManaCurrent * 0.667 //mana-to-stamina conversion factor (TODO)
 		);
 
 		//clamp to 0
 		ManaCurrent = 0.0;
-
-		UE_LOG(LogCharacterVitals, Warning, TEXT(""));
 	}
+
+	if (Role < ROLE_Authority)
+	{
+		Server_ChangeMana(iChangeAmount);
+	}
+
+	UE_LOG(LogCharacterVitals, Log, TEXT("%s mana is now %f/%f"), *(CURR_FUNC_CALL), (GetManaCurrent()), (GetManaTotal()));
+}
+
+void AonwardCharacter::Server_ChangeMana_Implementation(float iChangeAmount)
+{
+	UE_LOG(LogCharacterVitals, Log, TEXT("%s server call for %s"), *(CURR_FUNC_CALL), *(GetName()));
+	ChangeMana(iChangeAmount);
+}
+
+bool AonwardCharacter::Server_ChangeMana_Validate(float iChangeAmount)
+{
+	//TODO - log whats going on here
+	//TODO - is there anything else to validate?
+
+	if (!IsAlive())
+	{
+		return false;
+	}
+
+	return true;
 }
 
 

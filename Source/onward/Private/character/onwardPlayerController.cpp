@@ -27,12 +27,37 @@ void AonwardPlayerController::AddStamina(float iAmountToAdd)
 	}
 }
 
-//remove the specified amount of stamina from this player. pass "true" as second value to allow passing out from overexertion, will not pass out otherwise
-void AonwardPlayerController::RemoveStamina(float iAmountToAdd, FString ShouldPassOut)
+void AonwardPlayerController::RemoveStamina(float iAmountToRemove, FString ShouldPassOut)
 {
 	if (Cast<AonwardCharacter>(GetPawn()))
 	{
-		Cast<AonwardCharacter>(GetPawn())->ChangeStamina((iAmountToAdd * -1.0), (ShouldPassOut.ToLower() == "true"));
+		Cast<AonwardCharacter>(GetPawn())->ChangeStamina((iAmountToRemove * -1.0), (ShouldPassOut.ToLower() == "true"));
+	}
+	else
+	{
+		UE_LOG(LogInput, Error, TEXT("%s failed to get reference to our pawn"), *(CURR_FUNC_CALL));
+	}
+}
+
+
+
+void AonwardPlayerController::AddMana(float iAmountToAdd)
+{
+	if (Cast<AonwardCharacter>(GetPawn()))
+	{
+		Cast<AonwardCharacter>(GetPawn())->ChangeMana(iAmountToAdd);
+	}
+	else
+	{
+		UE_LOG(LogInput, Error, TEXT("%s failed to get reference to our pawn"), *(CURR_FUNC_CALL));
+	}
+}
+
+void AonwardPlayerController::RemoveMana(float iAmountToRemove)
+{
+	if (Cast<AonwardCharacter>(GetPawn()))
+	{
+		Cast<AonwardCharacter>(GetPawn())->ChangeMana((iAmountToRemove * -1.0));
 	}
 	else
 	{
