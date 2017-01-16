@@ -63,11 +63,20 @@ public:
 	//returns our total health
 	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetHealthTotal() const;
 
+	//are we alive?
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") bool IsAlive() const;
+
 	//returns our current stamina
 	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetStaminaCurrent() const;
 
 	//returns our total stamina
 	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetStaminaTotal() const;
+	
+	//alters the amount of stamina this character currently has - does not modify total amount
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") void ChangeStamina(float iChangeAmount, bool bAllowPassingOut = false);
+
+	//server version of ChangeStamina
+	UFUNCTION(Server, Reliable, WithValidation) void Server_ChangeStamina(float iChangeAmount, bool bAllowPassingOut = false);
 
 	//returns our current mana
 	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetManaCurrent() const;
@@ -75,12 +84,16 @@ public:
 	//returns our total mana
 	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") float GetManaTotal() const;
 
+	//alters the amount of mana this character currently has - does not modify total amount
+	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") void ChangeMana(float iChangeAmount);
+
 	//override
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
 
 	//called when the character dies, handles everything related to death
 	void HandleDeath();
 
+	
 
 	//==========================
 	// movement
@@ -155,19 +168,7 @@ protected:
 	//called on mousewheel scroll down
 	void Input_ScrollDown();
 
-
-
-	//==========================
-	// vitals
-	//==========================
-
-	//alters the amount of stamina this character currently has - does not modify total amount
-	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") void ChangeStamina(float iChangeAmount);
-
-	//alters the amount of mana this character currently has - does not modify total amount
-	UFUNCTION(BlueprintCallable, Category = "PlayerVitals") void ChangeMana(float iChangeAmount);
-
-
+	
 
 private:
 

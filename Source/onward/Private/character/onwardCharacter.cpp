@@ -418,6 +418,13 @@ float AonwardCharacter::GetHealthTotal() const
 	return HealthTotal;
 }
 
+bool AonwardCharacter::IsAlive() const
+{
+	return bIsAlive;
+}
+
+
+
 float AonwardCharacter::GetStaminaCurrent() const
 {
 	return StaminaCurrent;
@@ -427,6 +434,8 @@ float AonwardCharacter::GetStaminaTotal() const
 {
 	return StaminaTotal;
 }
+
+
 
 float AonwardCharacter::GetManaCurrent() const
 {
@@ -507,8 +516,10 @@ void AonwardCharacter::HandleDeath()
 
 
 
-void AonwardCharacter::ChangeStamina(float iChangeAmount)
+void AonwardCharacter::ChangeStamina(float iChangeAmount, bool bAllowPassingOut)
 {
+	UE_LOG(LogCharacterVitals, Log, TEXT("%s attempting to change %s's stamina by %f"), *(CURR_FUNC_CALL), *(GetName()), (iChangeAmount));
+
 	StaminaCurrent += iChangeAmount;
 
 	//check for overrun
@@ -519,9 +530,44 @@ void AonwardCharacter::ChangeStamina(float iChangeAmount)
 	//check for underrun
 	else if (StaminaCurrent < 0.0)
 	{
+		UE_LOG(LogCharacterVitals, Log, TEXT("%s stamina underflowed by %f, clamping to 0.0"), *(CURR_FUNC_CALL), (FMath::Abs(StaminaCurrent)));
 		StaminaCurrent = 0.0;
-		UE_LOG(LogCharacterVitals, Warning, TEXT(""));
+
+		//if the character is in a state where they can pass out, we should do that. otherwise just leave stamina clamped to 0
+		if (bAllowPassingOut)
+		{
+			//TODO call PassOut() here
+			UE_LOG(LogCharacterVitals, Warning, TEXT("%s overexerted itself and passed out from exhaustion!"), *(GetName()));
+			//this is a placeholder log! replace this with PassOut() !
+		}
 	}
+
+	if (Role < ROLE_Authority)
+	{
+		Server_ChangeStamina(iChangeAmount);
+	}
+}
+
+void AonwardCharacter::Server_ChangeStamina_Implementation(float iChangeAmount, bool bAllowPassingOut)
+{
+	UE_LOG(LogCharacterVitals, Log, TEXT("%s "), *(CURR_FUNC_CALL));
+	ChangeStamina(iChangeAmount, bAllowPassingOut);
+	
+		//
+	UE_LOG(HelloWorld, Warning, TEXT("SERVER PORTION"));
+}
+
+bool AonwardCharacter::Server_ChangeStamina_Validate(float iChangeAmount, bool bAllowPassingOut)
+{
+	//TODO - log whats going on here
+	//TODO - is there anything else to validate?
+
+	if(!IsAlive())
+	{
+		return false;
+	}
+
+	return true;
 }
 
 
