@@ -56,4 +56,5 @@ changelog
 - 08: fixed `time <string>` so that it correctly forwards to the next day if you enter a text value that's before today's current time. added a simple crosshair. added stamina and mana to both Acharacter and the hud, but they don't do anything yet.
 - 11: added walking; currently bound to left alt.
 - 14: added a few functions for dealing with stamina and mana. added a log category for actions involving character vitals. added commands to toggle visiblity of the debug bars and of the crosshair. added some more function call defines for logging.
+- 15: added exec commands to add and remove stamina from the current player. added exec commands to add and remove mana from the current player. if the more mana is removed from a character than is currently available in it's mana pool, the difference will be removed from stamina instead.
  
