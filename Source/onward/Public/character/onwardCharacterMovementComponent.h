@@ -5,6 +5,33 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "onwardCharacterMovementComponent.generated.h"
 
+UENUM(BlueprintType)
+namespace EonwardMovementMode
+{
+	enum Type
+	{
+		/*EMM_Prone			UMETA(DisplayName = "Prone"),*/ //unimplemented
+		EMove_Walking		UMETA(DisplayName = "Walking"),
+		EMove_Running		UMETA(DisplayName = "Running"),
+		EMove_Sprinting		UMETA(DisplayName = "Sprinting"),
+
+		EMove_MAX			UMETA(Hidden),
+	};
+}
+
+UENUM(BlueprintType)
+namespace EonwardStance
+{
+	enum Type
+	{
+		EStance_Standing	UMETA(DisplayName = "Standing"),
+		EStance_Crouching	UMETA(DisplayName = "Crouching"),
+		EStance_Prone		UMETA(DisplayName = "Prone"),
+
+		EStance_MAX			UMETA(Hidden),
+	};
+}
+
 UCLASS()
 class ONWARD_API UonwardCharacterMovementComponent : public UCharacterMovementComponent
 {
