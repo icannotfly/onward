@@ -2,6 +2,7 @@
 
 #include "onward.h"
 #include "DebugBarsWidget.h"
+#include "WatermarkWidget.h"
 #include "onwardHUD.h"
 
 
@@ -23,7 +24,12 @@ void AonwardHUD::BeginPlay()
 	GEngine->GameViewport->AddViewportWidgetContent(SNew(SWeakWidget).PossiblyNullContent(DebugBars.ToSharedRef()));
 
 	//Set widget's properties as visible (sets child widget's properties recursively)
-	DebugBars->SetVisibility(EVisibility::Visible);
+	DebugBars->SetVisibility(EVisibility::HitTestInvisible);
+
+	//watermark in the top-left corner
+	WatermarkWidget = SNew(SWatermarkWidget).OwnerHUD(this);
+	GEngine->GameViewport->AddViewportWidgetContent(SNew(SWeakWidget).PossiblyNullContent(WatermarkWidget.ToSharedRef()));
+	WatermarkWidget->SetVisibility(EVisibility::HitTestInvisible);
 }
 
 void AonwardHUD::DrawHUD()
@@ -31,6 +37,8 @@ void AonwardHUD::DrawHUD()
 	Super::DrawHUD();
 
 	const FVector2D ViewportSize = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
+
+	//TODO call DrawActorOverlays() if it's not done automatically
 
 	//draw a simple crosshair
 	if(bShowCrosshair)
@@ -52,13 +60,13 @@ void AonwardHUD::ToggleCrosshair()
 
 void AonwardHUD::ToggleDebugBars()
 {
-	if (DebugBars->GetVisibility() == EVisibility::Visible)
+	if (DebugBars->GetVisibility() == EVisibility::HitTestInvisible)
 	{
 		DebugBars->SetVisibility(EVisibility::Collapsed);
 	}
 	else if (DebugBars->GetVisibility() == EVisibility::Collapsed)
 	{
-		DebugBars->SetVisibility(EVisibility::Visible);
+		DebugBars->SetVisibility(EVisibility::HitTestInvisible);
 	}
 	else
 	{
