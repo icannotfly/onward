@@ -67,5 +67,5 @@ changelog
 
 ###2017-03
 - 14: added a text component above the player's head.
-- 21: removed text component and started work on PostRenderFor instead
+- 21: removed text component and started work on PostRenderFor instead. PRF runs off a timer so it's a bit more efficient than just iterating through all actors each frame.
  
