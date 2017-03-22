@@ -57,4 +57,15 @@ changelog
 - 11: added walking; currently bound to left alt.
 - 14: added a few functions for dealing with stamina and mana. added a log category for actions involving character vitals. added commands to toggle visiblity of the debug bars and of the crosshair. added some more function call defines for logging.
 - 15: added exec commands to add and remove stamina from the current player. added exec commands to add and remove mana from the current player. if the more mana is removed from a character than is currently available in it's mana pool, the difference will be removed from stamina instead.
+- 18: worked a bit on ui.
+- 19: worked a bit more on the ui.
+- 24: added two enums: EonwardMovementMode to describe the speed at which we're moving, and EonwardStance to describe how bent our legs are.
+
+###2017-02
+- 20: worked a bit on debug text for characters.
+- 21: a bit more. a text component will be more trouble than it's likely worth, so i think PostRenderFor is probably the way to go. updated to UE 4.15.
+
+###2017-03
+- 14: added a text component above the player's head.
+- 21: removed text component and started work on PostRenderFor instead
  
