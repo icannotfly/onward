@@ -163,7 +163,7 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 			]
 
 						
-			// prone/crouch/standing
+			// current movement speed
 			+SVerticalBox::Slot().Padding(PADDING_OUTER)
 			[
 				SNew(SOverlay)
@@ -183,12 +183,49 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 				]
 			]
 
+			// stance (prone / crouch / standing)
+			+SVerticalBox::Slot().Padding(PADDING_OUTER)
+			[
+				SNew(SOverlay)
+				+ SOverlay::Slot()
+				[
+					SNew(SProgressBar)
+					//.Percent(this, &SDebugBarsWidget::GetPlayerMovementVelocityXYPercentage)
+					.Percent(0.5)
+					//.FillColorAndOpacity(FSlateColor::FSlateColor(FLinearColor::Red))
+				]
+				+ SOverlay::Slot()
+				.Padding(PADDING)
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString("Standing"))
+					.ShadowColorAndOpacity(FLinearColor::Black)
+					.ShadowOffset(FIntPoint(1, 1))
+				]
+			]
 
-			// walk/run/sprint
+			// movement mode (walk / run / sprint)
+			+ SVerticalBox::Slot().Padding(PADDING_OUTER)
+			[
+				SNew(SOverlay)
+				+ SOverlay::Slot()
+				[
+					SNew(SProgressBar)
+					//.Percent(this, &SDebugBarsWidget::GetPlayerMovementVelocityXYPercentage)
+					.Percent(0.5)
+					//.FillColorAndOpacity(FSlateColor::FSlateColor(FLinearColor::Red))
+				]
+				+ SOverlay::Slot()
+				.Padding(PADDING)
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString("walking"))
+					.ShadowColorAndOpacity(FLinearColor::Black)
+					.ShadowOffset(FIntPoint(1, 1))
+				]
+			]
 
-
-			// movement speed
-
+			
 
 //			SNew(STextBlock)
 //			//.ShadowColorAndOpacity(FLinearColor::Black)

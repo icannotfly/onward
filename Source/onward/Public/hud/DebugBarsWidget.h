@@ -1,7 +1,6 @@
 #pragma once
 //Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
 
-#pragma once
 #include "onwardHUD.h"
 #include "onwardGameInstance.h"
 #include "SlateBasics.h"
