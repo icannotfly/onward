@@ -100,5 +100,30 @@ void AonwardHUD::ToggleDebugBars()
 
 void AonwardHUD::ToggleDebugOverlay()
 {
+	bShowOverlays = !bShowOverlays;
 
+	if (bShowOverlays)
+	{
+		UE_LOG(HelloWorld, Log, TEXT("debug overlays turned on"));
+	}
+	else
+	{
+		UE_LOG(HelloWorld, Log, TEXT("debug overlays turned off"));
+	}
+}
+
+void AonwardHUD::SetPostRenderForDrawRange(float NewPostRenderForDrawRange)
+{
+	if (NewPostRenderForDrawRange <= 0.0)
+	{
+		UE_LOG(HelloWorld, Error, TEXT("%s Cannot set PostRenderForDrawRange to %f"), *(CURR_FUNC_CALL), NewPostRenderForDrawRange);
+		if (NewPostRenderForDrawRange == 0.0)
+		{
+			UE_LOG(HelloWorld, Warning, TEXT("Please use ToggleDebugOverlay to turn the overlay off"));
+		}
+		return;
+	}
+
+	PostRenderForDrawRange = NewPostRenderForDrawRange;
+	UE_LOG(HelloWorld, Log, TEXT("PostRenderForDrawRange is now %f"), NewPostRenderForDrawRange);
 }

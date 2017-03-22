@@ -229,11 +229,19 @@ void AonwardGameMode::ToggleCrosshair()
 	Cast<AonwardHUD>(GetWorld()->GetFirstPlayerController()->GetHUD())->ToggleCrosshair();
 }
 
-
-
 void AonwardGameMode::ToggleDebugBars()
 {
 	Cast<AonwardHUD>(GetWorld()->GetFirstPlayerController()->GetHUD())->ToggleDebugBars();
+}
+
+void AonwardGameMode::ToggleDebugOverlay()
+{
+	Cast<AonwardHUD>(GetWorld()->GetFirstPlayerController()->GetHUD())->ToggleDebugOverlay();
+}
+
+void AonwardGameMode::SetDebugOverlayDrawDistance(float NewDrawDistance)
+{
+	Cast<AonwardHUD>(GetWorld()->GetFirstPlayerController()->GetHUD())->SetPostRenderForDrawRange(NewDrawDistance);
 }
 
 

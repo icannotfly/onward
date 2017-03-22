@@ -39,6 +39,12 @@ public:
 	//toggle visibilty of the debug bars
 	UFUNCTION(exec) void ToggleDebugBars();
 
+	//toggle visibilty of per-character info
+	UFUNCTION(exec) void ToggleDebugOverlay();
+
+	//set the distance at which to stop drawing debug overlays
+	UFUNCTION(exec) void SetDebugOverlayDrawDistance(float NewDrawDistance);
+
 	//do some tests; exact nature depends on the tests contained in this function at the time of compilation
 	UFUNCTION(exec) void DoTests();
 };

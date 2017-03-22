@@ -43,6 +43,9 @@ public:
 	//toggle visibility of debug overlay
 	UFUNCTION() void ToggleDebugOverlay();
 
+	//sets PostRenderForDrawRange
+	void SetPostRenderForDrawRange(float NewPostRenderForDrawRange);
+
 
 
 private:
