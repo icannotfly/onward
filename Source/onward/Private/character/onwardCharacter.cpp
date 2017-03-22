@@ -231,6 +231,10 @@ void AonwardCharacter::BeginPlay()
 
 	//attach camera to thirdperson target
 	GetCameraBoom()->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,"ThirdpersonCameraTarget");
+
+	//start updating vitals
+	FTimerHandle UpdateVitals_TimerHandle;
+	GetWorldTimerManager().SetTimer(UpdateVitals_TimerHandle, this, &AonwardCharacter::UpdateVitals, 0.5/*rate*/, true, 1.0/*initial delay*/);
 }
 
 
@@ -406,6 +410,41 @@ bool AonwardCharacter::IsWalking() const
 	return bWantsToWalk;		//TODO and other conditions, check looman's code line 366
 }
 
+
+
+void AonwardCharacter::UpdateVitals()
+{
+	FVector CurrentPosition = GetActorLocation();
+	FVector PositionDelta = CurrentPosition - LastKnownPosition;
+	//how far have we moved horizontally since the last time we checked?
+	float LinearPositionDeltaXY = FVector::Dist(FVector(0.0, 0.0, PositionDelta.Z), PositionDelta);
+
+	FString Status = "";
+	Status += "    position delta: ";
+	Status += PositionDelta.ToString();
+
+	if (LinearPositionDeltaXY > 0.0)
+	{
+		Status += "    moved ";
+		Status += FString::SanitizeFloat(LinearPositionDeltaXY);
+		Status += "cm";
+
+		float StaminaToRemove =
+			LinearPositionDeltaXY / 1000.0 //movement distance in meters
+			* 1.25 //stamina removed per meter
+			;
+		Status += "    removing ";
+		Status += FString::SanitizeFloat(StaminaToRemove);
+		Status += " stamina";
+	}
+
+	UE_LOG(LogCharacterMovement, Log, TEXT("%s"), *(Status));
+	
+
+
+
+	LastKnownPosition = CurrentPosition;
+}
 
 
 float AonwardCharacter::GetHealthCurrent() const
@@ -716,4 +755,11 @@ class AonwardUsableActor* AonwardCharacter::GetUsableInView()
 	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 1.0f);
 
 	return Cast<AonwardUsableActor>(Hit.GetActor());
+}
+
+
+
+void AonwardCharacter::PostRenderFor(class APlayerController * PC, class UCanvas * Canvas, FVector CameraPosition, FVector CameraDir)
+{
+	UE_LOG(HelloWorld, Log, TEXT("%s PostRenderFor !"), *(GetName()));
 }

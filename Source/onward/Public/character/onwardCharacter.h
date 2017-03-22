@@ -45,11 +45,17 @@ public:
 	//override
 	virtual void PossessedBy(AController *NewController) override;
 
+	//override - debug
+	virtual void PostRenderFor(class APlayerController * PC, class UCanvas * Canvas, FVector CameraPosition, FVector CameraDir) override;
+
 
 
 	//==========================
 	// vitals
 	//==========================
+
+	//call to update the status of all vitals - intended to be called via a timer
+	UFUNCTION() void UpdateVitals();
 
 	//are we currently sprinting?
 	UFUNCTION(BlueprintCallable, Category = "Movement") bool IsSprinting() const;
@@ -170,6 +176,9 @@ protected:
 
 	//called on mousewheel scroll down
 	void Input_ScrollDown();
+
+	//our last known position in the world
+	FVector LastKnownPosition = FVector(0, 0, 0);
 
 	
 
