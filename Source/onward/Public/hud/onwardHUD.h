@@ -53,6 +53,12 @@ private:
 	//should we show the crosshair?
 	bool bShowCrosshair = true;
 
-	//objects closer than this range will have their PostRenderFors called
-	float PostRenderForDrawRange = 1200.f;	//TODO this whole process should be done with a IsOverlapping applied to a hitsphere that's parented to the player, otherwise we're checking against a vast number of entities per frame to see if they're in range
+	//timer for automatically updating debug overlays
+	FTimerHandle UpdateDebugOverlays_TimerHandle;
+
+	//seeks out other entities around us, adds them to the PostRenderFor draw queue if they should be in it, and prunes old objects from the list
+	void ManageDebugOverlayTargets();
+
+	//objects within this range will have their PostRenderFors called
+	float PostRenderForDrawRange = 1500.f;	//TODO this whole process should be done with a IsOverlapping applied to a hitsphere that's parented to the player, otherwise we're checking against a vast number of entities per frame to see if they're in range
 };

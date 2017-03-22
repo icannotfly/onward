@@ -772,8 +772,15 @@ void AonwardCharacter::PostRenderFor(class APlayerController * PC, class UCanvas
 	}
 	else
 	{
-		//basically looks like the text is coming out of the player's dick: not ideal
+		//basically looks like the text is coming out of the character's crotch: not ideal
 		Anchor = Canvas->Project(GetActorLocation());
+		//set text to just "8===D" and stand to the right of the character for extra laughs
+	}
+
+	//skip drawing if we're not in frame - this is a pretty rough check, but hey, the more instructions skipped the better
+	if (Anchor.Z <= 0.0)
+	{
+		return;
 	}
 
 	//prevent blurryness by rounding up

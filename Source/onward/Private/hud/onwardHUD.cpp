@@ -34,34 +34,18 @@ void AonwardHUD::BeginPlay()
 
 	//show PostRenderFor overlays by default
 	bShowOverlays = true;
+
+	//create a timer for updating debug overlays
+	GetWorldTimerManager().SetTimer(UpdateDebugOverlays_TimerHandle, this, &AonwardHUD::ManageDebugOverlayTargets, 0.5/* rate */, true);
+	if (!bShowOverlays)
+	{
+		GetWorldTimerManager().PauseTimer(UpdateDebugOverlays_TimerHandle);
+	}
 }
 
 void AonwardHUD::DrawHUD()
 {
-	//draw PostRenderFor overlays
-	if (bShowOverlays)
-	{
-		PostRenderedActors.Empty();
-		FlushDebugStrings(GetWorld());
-
-		//draw only for actors in range - needs to be done before Super()
-		for (TActorIterator<AonwardCharacter> ActorIterator(GetWorld()); ActorIterator; ++ActorIterator)
-		{
-			if (
-				GetOwningPawn()
-				&& *ActorIterator != Cast<AonwardCharacter>(GetOwningPawn())	//make sure we don't add ourself to the list
-				&& FMath::Abs(FVector::Dist(GetOwningPawn()->GetActorLocation(), ActorIterator->GetActorLocation())) <= PostRenderForDrawRange	//only add if we're in range
-				&& GetOwningPawn()->GetDotProductTo(Cast<AActor>(*ActorIterator)) > 0.f	//only add if we're facing	//TODO we need to check the dot product between the CAMERA and the target, not the player and the target, otherwise things get weird in thirdperson
-				)
-			{
-				AddPostRenderedActor(Cast<AActor>(*ActorIterator));
-			}
-		}
-	}
-
 	Super::DrawHUD();
-
-	//TODO call DrawActorOverlays() if it's not done automatically - once an actor passes into our drawsphere, they add themselves to this list
 
 	//draw a simple crosshair
 	const FVector2D ViewportSize = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
@@ -98,6 +82,45 @@ void AonwardHUD::ToggleDebugBars()
 	}
 }
 
+void AonwardHUD::ManageDebugOverlayTargets()
+{
+	UE_LOG(HelloWorld, Verbose, TEXT("%s called"), *(CURR_FUNC_CALL))
+
+	//make sure we have a pawn to check distances against
+	if (GetOwningPawn())
+	{
+		//check current list, remove ents that don't match criteria
+		for (int32 i = 0; i < PostRenderedActors.Num(); i++)
+		{
+			if (
+				PostRenderedActors[i] == Cast<AonwardCharacter>(GetOwningPawn()) //if it's us
+				|| FMath::Abs(FVector::Dist(GetOwningPawn()->GetActorLocation(), PostRenderedActors[i]->GetActorLocation())) <= PostRenderForDrawRange //or if it's out of range
+				)
+			{
+				//remove it
+				RemovePostRenderedActor(PostRenderedActors[i]);
+			}
+		}
+
+		//add ents to list if they should be in there and aren't already
+		for (TActorIterator<AonwardCharacter> ActorIterator(GetWorld()); ActorIterator; ++ActorIterator)
+		{
+			if (
+				*ActorIterator != Cast<AonwardCharacter>(GetOwningPawn())	//make sure we don't add ourself to the list
+				&& FMath::Abs(FVector::Dist(GetOwningPawn()->GetActorLocation(), ActorIterator->GetActorLocation())) <= PostRenderForDrawRange	//only add if we're in range
+				//&& GetOwningPawn()->GetDotProductTo(Cast<AActor>(*ActorIterator)) > 0.f	//only add if we're facing	//TODO we need to check the dot product between the CAMERA and the target, not the player and the target, otherwise things get weird in thirdperson
+				)
+			{
+				AddPostRenderedActor(Cast<AActor>(*ActorIterator));
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(HelloWorld, Error, TEXT("%s no OwningPawn, cannot continue"), *(CURR_FUNC_CALL));
+	}
+}
+
 void AonwardHUD::ToggleDebugOverlay()
 {
 	bShowOverlays = !bShowOverlays;
@@ -105,10 +128,14 @@ void AonwardHUD::ToggleDebugOverlay()
 	if (bShowOverlays)
 	{
 		UE_LOG(HelloWorld, Log, TEXT("debug overlays turned on"));
+		GetWorldTimerManager().UnPauseTimer(UpdateDebugOverlays_TimerHandle);
 	}
 	else
 	{
 		UE_LOG(HelloWorld, Log, TEXT("debug overlays turned off"));
+		GetWorldTimerManager().PauseTimer(UpdateDebugOverlays_TimerHandle);
+		PostRenderedActors.Empty();
+		FlushDebugStrings(GetWorld());
 	}
 }
 
