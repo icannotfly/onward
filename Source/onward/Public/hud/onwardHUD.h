@@ -40,10 +40,16 @@ public:
 	//toggle visibilty of the debug bars
 	UFUNCTION() void ToggleDebugBars();
 
+	//toggle visibility of debug overlay
+	UFUNCTION() void ToggleDebugOverlay();
+
 
 
 private:
 
 	//should we show the crosshair?
 	bool bShowCrosshair = true;
+
+	//objects closer than this range will have their PostRenderFors called
+	float PostRenderForDrawRange = 1200.f;	//TODO this whole process should be done with a IsOverlapping applied to a hitsphere that's parented to the player, otherwise we're checking against a vast number of entities per frame to see if they're in range
 };

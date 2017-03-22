@@ -3,6 +3,7 @@
 #include "onward.h"
 #include "DebugBarsWidget.h"
 #include "WatermarkWidget.h"
+#include "onwardCharacter.h"
 #include "onwardHUD.h"
 
 
@@ -30,17 +31,40 @@ void AonwardHUD::BeginPlay()
 	WatermarkWidget = SNew(SWatermarkWidget).OwnerHUD(this);
 	GEngine->GameViewport->AddViewportWidgetContent(SNew(SWeakWidget).PossiblyNullContent(WatermarkWidget.ToSharedRef()));
 	WatermarkWidget->SetVisibility(EVisibility::HitTestInvisible);
+
+	//show PostRenderFor overlays by default
+	bShowOverlays = true;
 }
 
 void AonwardHUD::DrawHUD()
 {
+	//draw PostRenderFor overlays
+	if (bShowOverlays)
+	{
+		PostRenderedActors.Empty();
+		FlushDebugStrings(GetWorld());
+
+		//draw only for actors in range - needs to be done before Super()
+		for (TActorIterator<AonwardCharacter> ActorIterator(GetWorld()); ActorIterator; ++ActorIterator)
+		{
+			if (
+				GetOwningPawn()
+				&& *ActorIterator != Cast<AonwardCharacter>(GetOwningPawn())	//make sure we don't add ourself to the list
+				&& FMath::Abs(FVector::Dist(GetOwningPawn()->GetActorLocation(), ActorIterator->GetActorLocation())) <= PostRenderForDrawRange	//only add if we're in range
+				&& GetOwningPawn()->GetDotProductTo(Cast<AActor>(*ActorIterator)) > 0.f	//only add if we're facing	//TODO we need to check the dot product between the CAMERA and the target, not the player and the target, otherwise things get weird in thirdperson
+				)
+			{
+				AddPostRenderedActor(Cast<AActor>(*ActorIterator));
+			}
+		}
+	}
+
 	Super::DrawHUD();
 
-	const FVector2D ViewportSize = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
-
-	//TODO call DrawActorOverlays() if it's not done automatically
+	//TODO call DrawActorOverlays() if it's not done automatically - once an actor passes into our drawsphere, they add themselves to this list
 
 	//draw a simple crosshair
+	const FVector2D ViewportSize = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
 	if(bShowCrosshair)
 	{
 		DrawRect(
@@ -72,4 +96,9 @@ void AonwardHUD::ToggleDebugBars()
 	{
 		UE_LOG(LogExec, Error, TEXT("%s debug bars have unexpected visibility state"), *(CURR_FUNC_CALL));
 	}
+}
+
+void AonwardHUD::ToggleDebugOverlay()
+{
+
 }

@@ -761,5 +761,53 @@ class AonwardUsableActor* AonwardCharacter::GetUsableInView()
 
 void AonwardCharacter::PostRenderFor(class APlayerController * PC, class UCanvas * Canvas, FVector CameraPosition, FVector CameraDir)
 {
-	UE_LOG(HelloWorld, Log, TEXT("%s PostRenderFor !"), *(GetName()));
+	//UE_LOG(HelloWorld, Log, TEXT("%s PostRenderFor called!"), *(GetName()));
+
+	//determine location onscreen where we'll draw our info
+	FVector Anchor = FVector(0, 0, 0);
+	FName DebugAttachSocketName = "ThirdpersonCameraTarget";
+	if (GetMesh() && GetMesh()->GetSocketByName(DebugAttachSocketName) != NULL)
+	{
+		Anchor = Canvas->Project(GetMesh()->GetSocketLocation(DebugAttachSocketName));
+	}
+	else
+	{
+		//basically looks like the text is coming out of the player's dick: not ideal
+		Anchor = Canvas->Project(GetActorLocation());
+	}
+
+	//prevent blurryness by rounding up
+	Anchor.X = FMath::RoundToInt(Anchor.X);
+	Anchor.Y = FMath::RoundToInt(Anchor.Y);
+
+	uint32 VerticalOffset = 11;
+	
+	//draw name
+	FString IdentString = *(GetName());
+	Canvas->SetDrawColor(FColor::White);
+	Canvas->DrawText(GetStatsFont(), IdentString, Anchor.X, Anchor.Y + (0 * VerticalOffset));
+
+	//draw health
+	FString HealthString = "HP: ";
+	HealthString.AppendInt(GetHealthCurrent());
+	HealthString += "/";
+	HealthString.AppendInt(GetHealthTotal());
+	Canvas->SetDrawColor(FColor::Red);
+	Canvas->DrawText(GetStatsFont(), HealthString, Anchor.X, Anchor.Y + (1 * VerticalOffset));
+
+	//draw stamina
+	FString StaminaString = "SP: ";
+	StaminaString.AppendInt(GetStaminaCurrent());
+	StaminaString += "/";
+	StaminaString.AppendInt(GetStaminaTotal());
+	Canvas->SetDrawColor(FColor::Green);
+	Canvas->DrawText(GetStatsFont(), StaminaString, Anchor.X, Anchor.Y + (2 * VerticalOffset));
+
+	//draw mana
+	FString ManaString = "MP: ";
+	ManaString.AppendInt(GetManaCurrent());
+	ManaString += "/";
+	ManaString.AppendInt(GetManaTotal());
+	Canvas->SetDrawColor(FColor::Blue);
+	Canvas->DrawText(GetStatsFont(), ManaString, Anchor.X, Anchor.Y + (3 * VerticalOffset));
 }
