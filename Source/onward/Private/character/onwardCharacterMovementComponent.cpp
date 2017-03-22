@@ -36,3 +36,29 @@ float UonwardCharacterMovementComponent::GetMaxSpeed() const
 
 	return MaxSpeed;
 }
+
+
+
+FString UonwardCharacterMovementComponent::GetMovementModeString()
+{
+	switch (CurrentMovementMode)
+	{
+	case EonwardMovementMode::EMove_Walking:
+		return "walking";
+		break;
+
+	case EonwardMovementMode::EMove_Running:
+		return "running";
+		break;
+
+	case EonwardMovementMode::EMove_Sprinting:
+		return "sprinting";
+		break;
+
+	default:
+		return "UNKNOWN";
+		break;
+	}
+
+	return "ERROR";
+}

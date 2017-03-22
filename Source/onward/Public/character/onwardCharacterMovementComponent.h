@@ -38,6 +38,18 @@ class ONWARD_API UonwardCharacterMovementComponent : public UCharacterMovementCo
 	GENERATED_BODY()
 
 
+		
+	virtual float GetMaxSpeed() const override;
 
-		virtual float GetMaxSpeed() const override;
+public:
+
+	//returns a human-readable string representing our current movement mode
+	FString GetMovementModeString();
+
+
+
+protected:
+
+	//our current movement mode; this is basically the speed at which we're moving
+	int8 CurrentMovementMode;
 };
