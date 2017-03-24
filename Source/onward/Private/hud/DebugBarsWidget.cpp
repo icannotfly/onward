@@ -1,6 +1,8 @@
 #include "onward.h"
 #include "onwardCharacter.h"
 #include "DebugBarsWidget.h"
+#include "styles/GlobalDebugStyle.h"
+#include "styles/DebugStyles.h"
 #include "onwardHUD.h"
 
 #define LOCTEXT_NAMESPACE "SDebugBarsWidget"
@@ -11,6 +13,10 @@
 void SDebugBarsWidget::Construct(const FArguments& InArgs)
 {
 	OwnerHUD = InArgs._OwnerHUD;
+
+	// from https://wiki.unrealengine.com/Slate_Style_Sets_Part_2
+	//DebugStyle = &FDebugStyles::Get().GetWidgetStyle<FGlobalStyle>("DebugStyle");
+	// broken, unfortunately
 
 
 
@@ -25,8 +31,6 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 	//PlayerMovementVelocity.Bind(this, &SDebugBarsWidget::GetPlayerMovementVelocity);
 
 
-
-	//HUDStyle = &FMenuStyles::Get().GetWidgetStyle<FGlobalStyle>("Global");
 
 	ChildSlot
 	.VAlign(VAlign_Fill)
@@ -138,13 +142,15 @@ void SDebugBarsWidget::Construct(const FArguments& InArgs)
 				[
 					SNew(SProgressBar)
 					.Percent(this, &SDebugBarsWidget::GetPlayerManaPercentage)
-					.FillColorAndOpacity(FSlateColor::FSlateColor(FLinearColor::Blue))
+					.FillImage(&ManaBarBrush)
+					//.FillColorAndOpacity(FSlateColor::FSlateColor(FLinearColor::Blue))
 				]
 				+ SOverlay::Slot()
 				.Padding(PADDING)
 				[
 					SNew(STextBlock)
 					.Text(PlayerManaString)
+					//.TextStyle(&DebugStyle->MenuButtonTextStyle)
 					.ShadowColorAndOpacity(FLinearColor::Black)
 					.ShadowOffset(FIntPoint(1, 1))
 				]

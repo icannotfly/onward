@@ -7,21 +7,22 @@
 
 class SDebugBarsWidget : public SCompoundWidget
 {
-	SLATE_BEGIN_ARGS(SDebugBarsWidget)
-	{
-
-	}
+	SLATE_BEGIN_ARGS(SDebugBarsWidget) { }
 
 	/*See private declaration of OwnerHUD below.*/
 	SLATE_ARGUMENT(TWeakObjectPtr<class AonwardHUD>, OwnerHUD)
 
 	SLATE_END_ARGS()
 
+
+
 public:
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////Needed for every widget
 	/////Builds this widget and any of it's children
 	void Construct(const FArguments& InArgs);
+
+
 
 private:
 	////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -31,7 +32,12 @@ private:
 	/////circular ownership would prevent/break self-destruction of hud/widget (cause memory leak).
 	TWeakObjectPtr<class AonwardHUD> OwnerHUD;
 
-	
+
+
+	// reference to the Slate Style used for this HUD's widgets.
+	const struct FGlobalStyle* DebugStyle;
+
+
 
 	//time of year string
 	TAttribute<FText> WorldTime; 	//stores the binding for world time debug bar display
@@ -79,6 +85,9 @@ private:
 	TAttribute<float> PlayerManaPercentage;
 	TOptional<float> GetPlayerManaPercentage() const;
 
+	//mana bar color
+	FSlateColorBrush ManaBarBrush = FSlateColorBrush(FLinearColor::Blue);
+
 
 
 	//player movement status (running, jumping, whatever)
@@ -89,11 +98,4 @@ private:
 	TAttribute<float> PlayerMovementVelocity;
 	TOptional<float> GetPlayerMovementVelocityXY() const; //note that this only returns XY velocity, we don't care about jumping
 	TOptional<float> GetPlayerMovementVelocityXYPercentage() const;
-
-
-
-	/**
-	* A reference to the Slate Style used for this HUD's widgets.
-	**/
-	const struct FGlobalStyle* HUDStyle;
 };
